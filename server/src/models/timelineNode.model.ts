@@ -1,38 +1,44 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
+
 enum ContentType {
     URL = "URL",
     FILE = "FILE"
 }
 
-export interface IResoure extends Document {
+export interface IResource extends Document {
     contentType: ContentType;
     content: string;
 }
 
 export interface ITimelineNode extends Document {
-    messege: string;
-    resources: IResoure[];
-    topic: string
+    message: string;
+    resources: IResource[];
+    topic: string;
 }
 
-const ResoureSchema = new Schema<IResoure>(
+const ResourceSchema = new Schema<IResource>(
     {
-        contentType: ContentType,
+        contentType: {
+            type: String,
+            enum: Object.values(ContentType),
+            required: true
+        },
         content: {
             type: String,
             required: true
         }
-    },{ timestamps: true }
+    },
+    { timestamps: true }
 );
 
 const TimelineNodeSchema = new Schema<ITimelineNode>(
     {
-        messege: {
+        message: {
             type: String,
             required: true
         },
-        resources: [ResoureSchema],
+        resources: [ResourceSchema],
         topic: String
     },
     { timestamps: true }

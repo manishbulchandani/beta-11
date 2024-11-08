@@ -2,6 +2,12 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+export interface IProfessionalExperience extends Document {
+  position: string;
+  company: string;
+  description: string;
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -11,15 +17,36 @@ export interface IUser extends Document {
   generateRefreshToken(): string;
   nodes: mongoose.Types.ObjectId[];
   onboarding: boolean;
+  phone: number;
+  address: string;
+  degree: string;
+  graduationYear: number;
+  professionalExperiences: IProfessionalExperience[];
   collegeOrInstituteName: string;
   bio: string;
 }
+
+const professionalExperienceSchema = new Schema<IProfessionalExperience>(
+  {
+    position: {
+      type: String,
+      required: true
+    },
+    company: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    }
+  }
+);
 
 const UserSchema = new Schema<IUser>(
   {
     name: {
       type: String,
-      required: true,
       minlength: 3,
     },
     email: {
@@ -27,13 +54,27 @@ const UserSchema = new Schema<IUser>(
       required: true,
       unique: true
     },
+    phone: {
+      type: Number,
+      unique: true
+    },
+    address: {
+      type: String,
+    },
+    degree: {
+      type: String,
+    },
+    graduationYear: {
+      type: Number,
+    },
+    professionalExperiences: [professionalExperienceSchema],
     password: {
       type: String,
       required: true,
       minlength: 6,
     },
     nodes: [{
-      types: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'TimelineNode'
     }],
     onboarding: {

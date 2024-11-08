@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import User from '../models/user.model';
 import jwt from "jsonwebtoken";
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const endPoint = req.originalUrl;
+
+  console.log(endPoint);
 
   if (endPoint == "api/v1/register/" || endPoint == "api/v1/login/" || endPoint == "api/v1/refresh-token/") next();
 

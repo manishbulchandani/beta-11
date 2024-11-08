@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
+
 enum ContentType {
     URL = "URL",
     FILE = "FILE"
@@ -16,7 +17,7 @@ export interface ITimelineNode extends Document {
     topic: string
 }
 
-const ResoureSchema = new Schema<IResource>(
+const ResourceSchema = new Schema<IResource>(
     {
         contentType: {
             type: String,
@@ -27,7 +28,8 @@ const ResoureSchema = new Schema<IResource>(
             type: String,
             required: true
         }
-    },{ timestamps: true }
+    },
+    { timestamps: true }
 );
 
 const TimelineNodeSchema = new Schema<ITimelineNode>(
@@ -36,7 +38,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             type: String,
             required: true
         },
-        resources: [ResoureSchema],
+        resources: [ResourceSchema],
         topic: String
     },
     { timestamps: true }

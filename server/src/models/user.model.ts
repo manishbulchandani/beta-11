@@ -2,38 +2,47 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export enum UserRole {
-  USER = "USER",
-  ADMIN = "ADMIN",
-}
-
 export interface IUser extends Document {
-  username: string;
+  name: string;
+  email: string;
   password: string;
-  role: UserRole;
   isPasswordMatch(password: string): Promise<boolean>;
   generateAccessToken(): string;
   generateRefreshToken(): string;
+  nodes: mongoose.Types.ObjectId[];
+  onboarding: boolean;
+  collegeOrInstituteName: string;
+  bio: string;
 }
 
 const UserSchema = new Schema<IUser>(
   {
-    username: {
+    name: {
       type: String,
       required: true,
-      unique: true,
       minlength: 3,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true
     },
     password: {
       type: String,
       required: true,
       minlength: 6,
     },
-    role: {
-      type: String,
-      enum: Object.values(UserRole),
-      default: UserRole.USER,
+    nodes: [{
+      types: Schema.Types.ObjectId,
+      ref: 'TimelineNode'
+    }],
+    onboarding: {
+      type: Boolean,
+      required: true,
+      default: false
     },
+    collegeOrInstituteName: String,
+    bio: String
   },
   { timestamps: true }
 );

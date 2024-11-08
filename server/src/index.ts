@@ -6,6 +6,7 @@ import cors from 'cors';
 import path from 'path'; 
 import connectDB from './config/db';
 import v1Routes from './routes/v1/index';
+import { authMiddleware } from './middlewares/auth.middleware';
 import errorHandlerMiddleware from './middlewares/errorHandler.middleware';
 import notFoundMiddleware from './middlewares/notFound.middleware';
 import cookieParser from "cookie-parser"
@@ -37,7 +38,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/v1', v1Routes);
+app.use('/api/v1', authMiddleware, v1Routes);
 
 if (process.env.NODE_ENV === "production") {
     const buildPath = path.join(__dirname, '..', '..', 'client', 'dist');

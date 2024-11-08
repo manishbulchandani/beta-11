@@ -4,10 +4,9 @@ import jwt from "jsonwebtoken"
 
 export const handleRegisterUser = async (req: Request, res: Response) => {
   try {
-    const { username, password, role } = req.body;
-    const userRole=role ?? "USER"
+    const { email, password } = req.body;
 
-    const user = new User({ username, password, userRole });
+    const user = new User({ email, password });
     await user.save();
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
@@ -18,8 +17,8 @@ export const handleRegisterUser = async (req: Request, res: Response) => {
 
 export const handleLoginUser = async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
-    const user: IUser | null = await User.findOne({ username });
+    const { email, password } = req.body;
+    const user: IUser | null = await User.findOne({ email });
     if (!user || !(await user.isPasswordMatch(password))) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -33,7 +32,7 @@ export const handleLoginUser = async (req: Request, res: Response) => {
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
-
+   
     res.json({ accessToken });
   } catch (error) {
     res.status(500).json({ error: "Login failed" });

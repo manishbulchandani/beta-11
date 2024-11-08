@@ -1,7 +1,7 @@
 // userSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "./userTypes";
-import { loginThunk } from "./userThunks";
+import { getUserThunk, loginThunk } from "./userThunks";
 
 interface UserState {
   user: User | null;
@@ -31,6 +31,10 @@ const userSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     });
+    builder.addCase(getUserThunk.fulfilled,(state,action)=>{
+      state.isAuthenticated=true;
+      state.user=action.payload
+    })
   },
 });
 

@@ -27,11 +27,9 @@ const SignUpPage: React.FC = () => {
   const [passwordRevealed, setPasswordRevealed] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const [credentials, setCredentials] = useState<{
-    name: string;
     email: string;
     password: string;
   }>({
-    name: "",
     email: "",
     password: "",
   });
@@ -155,16 +153,6 @@ const SignUpPage: React.FC = () => {
               <Stack>
                 <TextField
                   id="filled-size-small"
-                  name="name"
-                  variant="outlined"
-                  label="Enter Your Name"
-                  value={credentials.name}
-                  onChange={handleChange}
-                />
-              </Stack>
-              <Stack>
-                <TextField
-                  id="filled-size-small"
                   name="email"
                   variant="outlined"
                   label="Enter Email"
@@ -239,7 +227,7 @@ const SignUpPage: React.FC = () => {
               disabled={status === "loading"}
               sx={{ padding: "8px", marginTop: "1rem", width: "100%" }}
             >
-              {status === "loading" ? "Loading..." : "Login"}
+              {status === "loading" ? "Loading..." : "Sign Up"}
             </Button>
           </form>
         </Stack>

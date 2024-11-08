@@ -29,7 +29,10 @@ const processQueue = (error: any, token: string | null = null) => {
 
 apiClient.interceptors.request.use(
   (config: CustomAxiosRequestConfig) => {
-    const token = getCookie("accessToken"); 
+    const cookietoken = getCookie("accessToken"); 
+    const localToken=localStorage.getItem("accessToken")
+    const token=localToken || cookietoken
+    
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }

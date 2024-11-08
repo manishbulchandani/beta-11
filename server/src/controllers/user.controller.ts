@@ -1,17 +1,19 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
-import User, { IUser, IProfessionalExperience } from '../models/user.model'
+import User, { IUser } from '../models/user.model'
 
 // GetUser
 export const handleGetUserById = async (req: Request, res: Response): Promise<Response> => {
     try {
         const getUserRes = {
-            name: req.user.name,
-            email: req.user.email,
-            onbarding: req.user.onbarding,
-            collegeOrInstitueName: req.user.collegeOrInstitueName,
-            bio: req.user.bio
+            name: req.user?.name,
+            email: req.user?.email,
+            onboarding: req.user?.onboarding,
+            collegeOrInstitueName: req.user?.collegeOrInstitueName,
+            bio: req.user?.bio
         }
+
+        console.log(getUserRes)
       return res.status(200).json(getUserRes);
     } catch (error) {
       if (error instanceof mongoose.Error) {
@@ -26,7 +28,10 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 // Onboarding
 export const handleDoOnboarding = async (req: Request, res: Response): Promise<Response> => {
     const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences } = req.body;
-  
+
+    console.log(firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences)
+
+    
     try {
       if (!req.user) {
         return res.status(401).json({ error: 'Unauthorized (user not found)' });

@@ -1,4 +1,4 @@
-import { Stack, Typography, Paper, Chip, Box, useTheme } from "@mui/material";
+import { Stack, Typography, Paper, Chip, useTheme } from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 const Timeline = () => {

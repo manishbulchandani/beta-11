@@ -16,7 +16,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../features/store";
-import { loginThunk, signUpThunk } from "../../features/user/userThunks";
+import { loginThunk } from "../../features/user/userThunks";
 
 const LoginPage: React.FC = () => {
   const theme = useTheme();
@@ -59,13 +59,13 @@ const LoginPage: React.FC = () => {
   //   }
   // };
 
-  const handleSignUp = async (event?: React.FormEvent) => {
+  const handleSignIn = async (event?: React.FormEvent) => {
     event?.preventDefault();
 
-    const resultAction = await dispatch(signUpThunk(credentials));
+    const resultAction = await dispatch(loginThunk(credentials));
 
     if (loginThunk.fulfilled.match(resultAction)) {
-      navigate("/home");
+      navigate("/");
     } else {
       alert("SignUp failed");
     }
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
       if (e.key === "Enter") {
         console.log(credentials);
         e.preventDefault();
-        handleSignUp();
+        handleSignIn();
       }
     };
 
@@ -84,7 +84,7 @@ const LoginPage: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleSignUp]);
+  }, [handleSignIn]);
 
 
 
@@ -150,7 +150,7 @@ const LoginPage: React.FC = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleSignUp();
+              handleSignIn();
             }}
           >
             <Stack gap="2rem">

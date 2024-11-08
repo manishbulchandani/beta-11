@@ -5,20 +5,24 @@ enum ContentType {
     FILE = "FILE"
 }
 
-export interface IResoure extends Document {
+export interface IResource extends Document {
     contentType: ContentType;
     content: string;
 }
 
 export interface ITimelineNode extends Document {
-    messege: string;
-    resources: IResoure[];
+    message: string;
+    resources: IResource[];
     topic: string
 }
 
-const ResoureSchema = new Schema<IResoure>(
+const ResoureSchema = new Schema<IResource>(
     {
-        contentType: ContentType,
+        contentType: {
+            type: String,
+            enum: Object.values(ContentType),
+            required: true
+        },
         content: {
             type: String,
             required: true
@@ -28,7 +32,7 @@ const ResoureSchema = new Schema<IResoure>(
 
 const TimelineNodeSchema = new Schema<ITimelineNode>(
     {
-        messege: {
+        message: {
             type: String,
             required: true
         },

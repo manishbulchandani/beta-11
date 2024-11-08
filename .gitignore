@@ -1,0 +1,53 @@
+# Node.js dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Logs
+logs/
+client/logs/
+server/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+client/bower_components/
+server/bower_components/
+
+# Production files
+# client/dist/
+server/dist/
+
+# Environment variables
+client/.env
+server/.env
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.bak
+*.tmp
+
+# Coverage and testing output
+coverage/
+client/coverage/
+server/coverage/
+client/.nyc_output/
+server/.nyc_output/
+
+# Lint and cache files
+client/.eslintcache
+server/.eslintcache
+client/.cache/
+server/.cache/

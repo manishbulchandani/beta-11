@@ -1,0 +1,10 @@
+.login-page .MuiOutlinedInput-notchedOutline{
+    border-color: #00000000 !important;
+}
+.login-page .MuiInputBase-input{
+    background-color: #e8f0fe !important;
+    border-radius: 8px !important;
+}
+.login-page .MuiFormLabel-root{
+    font-weight: 700;
+}

@@ -7,8 +7,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      <h2>Welcome, {user?.username}</h2>
-      <p>Role: {user?.role}</p>
+      <h2>Welcome, {user?.name}</h2>
     </div>
   );
 };

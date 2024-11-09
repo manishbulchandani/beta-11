@@ -12,7 +12,7 @@ router.post('/refresh-token', authControllers.handleRefreshToken);
 
 router.get('/getUser', userControllers.handleGetUserById);
 
-router.get('/getProfile', userControllers.handleGetProfileById);
+router.post('/getProfile', userControllers.handleGetProfileById);
 
 router.post('/onboarding', userControllers.handleDoOnboarding);
 

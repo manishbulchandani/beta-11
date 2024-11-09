@@ -1,1 +1,1 @@
-export type topics = "URL" | "LIFE"
+export type contentTypes = "URL" | "LIFE"

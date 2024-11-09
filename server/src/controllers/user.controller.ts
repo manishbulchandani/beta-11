@@ -9,7 +9,7 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
         const getUserRes = {
             name: req.user.name,
             email: req.user.email,
-            onbarding: req.user.onboarding,
+            onboarding: req.user.onboarding,
             collegeOrInstitueName: req.user.collegeOrInstitueName,
             bio: req.user.bio
         }
@@ -26,7 +26,12 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 // GetProfle
 export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const userProfile = await User.findById(req.user._id).select('-password').populate('nodes').exec();
+        const {userId} = req.body;
+        let userProfile;
+        
+        if (userId) {
+          userProfile = await User.findById(userId).select('-password').populate('nodes').exec();
+        }
 
         return res.status(200).json(userProfile);
     } catch (error) {

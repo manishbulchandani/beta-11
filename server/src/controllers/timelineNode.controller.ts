@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
-import cloudinary from '../config/cloudinary'
+import cloudinary from '../config/cloudinary';
 import multer from 'multer';
 import User, { IUser, IProfessionalExperience } from '../models/user.model'
 import TimelineNode, { ITimelineNode, contentTypes, IResource, topics } from '../models/timelineNode.model'
@@ -14,36 +14,23 @@ export const handleAddTimelineNode = async (req: Request, res: Response): Promis
     const {title, topic, message, resources} = req.body;
 
     try {
-      let resrs = [];
-
-      for (const resource of resources) {
-        if (resource.contentType == contentTypes.FILE) {
-            const result = cloudinary.uploader.upload_stream(
-              { folder: 'Path Partner' },
-              async (error, result) => {
-                if (error) {
-                  return res.status(500).json({ error: error.message });
-                }
-                const uploadedFileUrl = result?.secure_url;
-
-                const resrc = {
-                  contentType: resource.contentType,
-                  content: uploadedFileUrl
-                } as IResource
-
-                resrs.push(resrc);
-              }
-            );
-        }
-        else {
-          const resrc = {
-            contentType: resource.contentType,
-            content: resource.content
-          } as IResource
-
-          resrs.push(resrc);
-        }
-      }
+      let resrs = resources;
+      const files = req.files as Express.Multer.File[];
+  
+      const uploadPromises = files.map((file: Express.Multer.File) => {
+        return cloudinary.uploader.upload(file.path, {
+          folder: 'Path Partner'
+        });
+      });
+  
+      const uploadResponses = await Promise.all(uploadPromises);
+  
+      uploadResponses.map(response => {
+        resrs.push({
+          contentTypes: contentTypes.FILE,
+          content: response.secure_url
+        })
+      });
 
       const newTimelineNode = new TimelineNode ({
           userId: req.user._id,
@@ -83,5 +70,26 @@ export const handleGetTimelineNodeOrderByTopic = async (req: Request, res: Respo
       } else {
         return res.status(500).json({ error: 'Internal server error' });
       }
+    }
+  };
+
+// GetFeed
+export const handleGetFeed = async (req: Request, res: Response) => {
+    try {
+      const userId = req.user.id;
+
+      const user = await User.findById(userId).select('connections');
+
+      if (!user) return res.status(404).json({ message: 'User not found' });
+  
+      const connections = user.connections;
+  
+      const feedPosts = await TimelineNode.find({ author: { $in: connections } })
+        .sort({ createdAt: -1 })
+        .limit(20);
+  
+      res.status(200).json(feedPosts);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to load feed', error });
     }
   };

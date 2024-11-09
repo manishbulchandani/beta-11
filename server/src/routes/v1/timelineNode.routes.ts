@@ -11,4 +11,6 @@ router.post('/addTimelineNode', upload.single('file'), timelineNodeControllers.h
 
 router.post('/getTimelineNodesGroupByTopic', timelineNodeControllers.handleGetTimelineNodeOrderByTopic);
 
+router.get('/getFeed', timelineNodeControllers.handleGetFeed);
+
 export default router;

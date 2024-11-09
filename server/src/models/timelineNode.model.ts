@@ -18,10 +18,11 @@ export interface IResource extends Document {
 
 export interface ITimelineNode extends Document {
     title: string;
-    messege: string;
+    message: string;
     resources: IResource[];
     userId: mongoose.Types.ObjectId;
     topic: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
+    createdAt?: Date;
 }
 
 const ResourceSchema = new Schema<IResource>(
@@ -45,7 +46,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             type: String,
             required: true
         },
-        messege: {
+        message: {
             type: String,
             required: true
         },

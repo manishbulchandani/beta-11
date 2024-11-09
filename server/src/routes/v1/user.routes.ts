@@ -16,4 +16,6 @@ router.post('/getProfile', userControllers.handleGetProfileById);
 
 router.post('/onboarding', userControllers.handleDoOnboarding);
 
+router.post('/follow', userControllers.handleFollow);
+
 export default router;

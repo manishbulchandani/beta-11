@@ -7,7 +7,7 @@ import User, { IUser, IProfessionalExperience } from '../models/user.model'
 import TimelineNode, { ITimelineNode, contentTypes, IResource, category } from '../models/timelineNode.model'
 
 
-
+// AddTimelineNode
 export const handleAddTimelineNode = async (req: Request, res: Response): Promise<Response> => {
     if (!req.user?._id) {
       return res.status(401).json({ error: 'User not authenticated' });
@@ -112,7 +112,7 @@ export const handleGetFeed = async (req: Request, res: Response) => {
 
     const user = await User.findById(userId).select('following');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    
+
     const following = user.following;
 
     const feedPosts = await TimelineNode.find({ userId: { $in: following } })
@@ -142,23 +142,32 @@ export const handleGetFeed = async (req: Request, res: Response) => {
   }
 };
 
-// export const handleGetFeed = async (req: Request, res: Response) => {
-//     try {
-//       const userId = req.user.id;
+// SearchTimelineNodes
+export const handleSearchTimelineNodesByCategory = async (req: Request, res: Response) => {
+  try {
+    const { category } = req.body;
 
-//       const user = await User.findById(userId).select('following');
+    const timelineNodes = await TimelineNode.aggregate([
+        { $match: { category } },
+        { $sort: { createdAt: -1 } },
+        {
+            $group: {
+                _id: "$userId",
+                nodes: { $push: "$$ROOT" }
+            }
+        }
+    ]);
 
-//       if (!user) return res.status(404).json({ message: 'User not found' });
-  
-//       const following = user.following;
-  
-//       const feedPosts = await TimelineNode.find({ author: { $in: following } })
-//         .populate('userId')
-//         .sort({ createdAt: -1 })
-//         .limit(20);
-  
-//       res.status(200).json(feedPosts);
-//     } catch (error) {
-//       res.status(500).json({ message: 'Failed to load feed', error });
-//     }
-//   };
+    const groupedResults = timelineNodes.map((group) => {
+        const paginatedNodes = [];
+        for (let i = 0; i < group.nodes.length; i += 5) {
+            paginatedNodes.push(group.nodes.slice(i, i + 5));
+        }
+        return { userId: group._id, name: req.user.name, bio: req.user.bio, timelineNodes: paginatedNodes };
+    });
+
+    res.status(200).json(groupedResults);
+  } catch (error) {
+    res.status(500).json({ message: 'Interval Server Error', error });
+  }
+};

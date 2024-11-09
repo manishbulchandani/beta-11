@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { 
-  Dialog, 
-  DialogTitle, 
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
@@ -10,49 +10,87 @@ import {
   Box,
   Typography,
   IconButton,
-  Paper,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Stack
-} from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import LinkIcon from '@mui/icons-material/Link';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { addNodeToTimeline } from '../../features/timeline/timelineApi';
+  Stack,
+  SelectChangeEvent,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import LinkIcon from "@mui/icons-material/Link";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { addNodeToTimeline } from "../../features/timeline/timelineApi";
 
-interface Resource {
-  type: 'url' | 'file';
-  value: string;
+export enum Categories {
+  WEB = "WEB DEVELOPMENT",
+  APP = "APP DEVELOPMENT",
+  AIML = "AI & ML",
 }
 
-const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
-  const [title, setTitle] = useState('');
-  const [message, setMessage] = useState('');
-  const [newTopic, setNewTopic] = useState('');
+interface Resource {
+  contentType: "URL" | "FILE";
+  content: string | File;
+  displayName?: string; // Added for file names
+}
+
+interface AddToTimelineModalProps {
+  open: boolean;
+  handleClose: () => void;
+  handlePushTimeline: (item: TimelineItem) => void;
+}
+
+interface TimelineItem {
+  title: string;
+  message: string;
+  resources: Resource[];
+  category: Categories;
+  topics: string[];
+  createdAt: string;
+}
+
+const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
+  open,
+  handleClose,
+  handlePushTimeline,
+}) => {
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [category, setCategory] = useState<Categories>(Categories.WEB);
+  const [newTopic, setNewTopic] = useState("");
   const [topics, setTopics] = useState<string[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
-  const [resourceType, setResourceType] = useState<'url' | 'file'>('url');
-  const [resourceValue, setResourceValue] = useState('');
+  const [resourceType, setResourceType] = useState<"URL" | "FILE">("URL");
+  const [resourceValue, setResourceValue] = useState("");
   const [isDragging, setIsDragging] = useState(false);
 
   const handleTopicAdd = () => {
     if (newTopic.trim()) {
       setTopics([...topics, newTopic.trim()]);
-      setNewTopic('');
+      setNewTopic("");
     }
   };
 
   const handleTopicDelete = (topicToDelete: string) => {
-    setTopics(topics.filter(topic => topic !== topicToDelete));
+    setTopics(topics.filter((topic) => topic !== topicToDelete));
   };
 
   const handleResourceAdd = () => {
     if (resourceValue.trim()) {
-      setResources([...resources, { type: resourceType, value: resourceValue.trim() }]);
-      setResourceValue('');
+      if (resourceType === "URL" && !isValidUrl(resourceValue.trim())) {
+        alert("Please enter a valid URL.");
+        return;
+      }
+      setResources([
+        ...resources,
+        { 
+          contentType: resourceType, 
+          content: resourceValue.trim(),
+          displayName: resourceValue.trim()
+        }
+      ]);
+      setResourceValue("");
     }
   };
 
@@ -60,65 +98,117 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
     setResources(resources.filter((_, i) => i !== index));
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
     const files = Array.from(e.dataTransfer.files);
-    files.forEach(file => {
-      setResources(prev => [...prev, { type: 'file', value: file.name }]);
-    });
+    const newResources: Resource[] = files.map(file => ({
+      contentType: "FILE",
+      content: file,
+      displayName: file.name
+    }));
+    setResources(prev => [...prev, ...newResources]);
   };
 
-  const handleSubmit = () => {
-    // Handle form submission here
-    const formData = {
-      title,
-      message,
-      topics,
-      resources
-    };
-    console.log(formData);
+  const handleCategoryChange = (event: SelectChangeEvent<Categories>) => {
+    setCategory(event.target.value as Categories);
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !message.trim()) return;
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("message", message);
+    formData.append("category", category);
     
-    addNodeToTimeline(formData)
+    topics.forEach((topic, i) => {
+      formData.append(`topics[${i}]`, topic);
+    });
 
+    resources.forEach((resource, i) => {
+      if (resource.contentType === "FILE" && resource.content instanceof File) {
+        formData.append(`files`, resource.content);
+      } else if (resource.contentType === "URL") {
+        formData.append(`resources[${i}][contentType]`, "URL");
+        formData.append(`resources[${i}][content]`, resource.content as string);
+      }
+    });
 
-    handleClose();
+    try {
+      await addNodeToTimeline(formData);
+      handlePushTimeline({
+        title,
+        message,
+        resources,
+        category,
+        topics,
+        createdAt: "Just Now",
+      });
+      handleClose();
+      // Reset form
+      setTitle("");
+      setMessage("");
+      setCategory(Categories.WEB);
+      setTopics([]);
+      setResources([]);
+    } catch (error) {
+      console.error("Error adding timeline node:", error);
+      alert("Failed to add timeline node.");
+    }
+  };
+
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const getResourceDisplayName = (resource: Resource): string => {
+    if (resource.contentType === "FILE" && resource.content instanceof File) {
+      return resource.content.name;
+    }
+    return resource.displayName || resource.content as string;
   };
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={handleClose}
       maxWidth="md"
       fullWidth
       sx={{
-        '& .MuiDialog-paper': {
+        "& .MuiDialog-paper": {
           borderRadius: 2,
-          p: 2
-        }
+          p: 2,
+        },
       }}
     >
-      <DialogTitle sx={{ 
-        fontSize: '1.5rem', 
-        fontWeight: 'bold',
-        pb: 1
-      }}>
+      <DialogTitle
+        sx={{
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          pb: 1,
+        }}
+      >
         Add to Timeline
       </DialogTitle>
 
       <DialogContent sx={{ pt: 2 }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          {/* Title Input */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <TextField
             label="Title"
             fullWidth
@@ -128,7 +218,6 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
             sx={{ mt: 2 }}
           />
 
-          {/* Message Input */}
           <TextField
             label="Message"
             fullWidth
@@ -139,18 +228,32 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
             variant="outlined"
           />
 
-          {/* Topics Section */}
+          <FormControl fullWidth>
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={category}
+              label="Category"
+              onChange={handleCategoryChange}
+            >
+              {Object.values(Categories).map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <Box>
-            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'medium' }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
               Topics Learned
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
               <TextField
                 size="small"
                 value={newTopic}
                 onChange={(e) => setNewTopic(e.target.value)}
                 placeholder="Add a topic"
-                onKeyPress={(e) => e.key === 'Enter' && handleTopicAdd()}
+                onKeyPress={(e) => e.key === "Enter" && handleTopicAdd()}
                 sx={{ flex: 1 }}
               />
               <Button
@@ -162,113 +265,104 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
                 Add
               </Button>
             </Box>
-            <Stack sx={{ gap: 1 }}>
+            <Stack direction="row" spacing={1} flexWrap="wrap">
               {topics.map((topic, index) => (
                 <Chip
                   key={index}
                   label={topic}
                   onDelete={() => handleTopicDelete(topic)}
                   sx={{
-                    width:"max-content",
-                    borderRadius:"4px",
-                    bgcolor: '#b8e1fc',
-                    // color: 'primary.contrastText',
-                    '& .MuiChip-deleteIcon': {
-                      // color: 'primary.contrastText'
-                    }
+                    m: 0.5,
+                    borderRadius: "4px",
+                    bgcolor: "primary.light",
+                    color: "primary.dark",
                   }}
                 />
               ))}
             </Stack>
           </Box>
 
-          {/* Resources Section */}
           <Box>
-            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'medium' }}>
+            <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
               Resources
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+            <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Type</InputLabel>
                 <Select
                   value={resourceType}
                   label="Type"
-                  onChange={(e) => setResourceType(e.target.value as 'url' | 'file')}
+                  onChange={(e) => setResourceType(e.target.value as "URL" | "FILE")}
                 >
-                  <MenuItem value="url">URL</MenuItem>
-                  <MenuItem value="file">File</MenuItem>
+                  <MenuItem value="URL">URL</MenuItem>
+                  <MenuItem value="FILE">File</MenuItem>
                 </Select>
               </FormControl>
               <TextField
                 size="small"
                 value={resourceValue}
                 onChange={(e) => setResourceValue(e.target.value)}
-                placeholder={resourceType === 'url' ? 'Enter URL' : 'Enter file name'}
+                placeholder={resourceType === "URL" ? "Enter URL" : "Enter file name"}
                 sx={{ flex: 1 }}
               />
               <Button
                 variant="contained"
                 onClick={handleResourceAdd}
-                startIcon={resourceType === 'url' ? <LinkIcon /> : <UploadFileIcon />}
+                startIcon={resourceType === "URL" ? <LinkIcon /> : <UploadFileIcon />}
                 sx={{ minWidth: 100 }}
               >
                 Add
               </Button>
             </Box>
 
-            {/* Drag and Drop Area */}
-            <Stack 
-              alignItems={"center"}
-              gap="12px"
+            <Box
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
               sx={{
                 p: 3,
                 mb: 2,
-                border: '2px dashed',
-                backgroundColor: isDragging ? "#c7dce7" : "#fff",
-                  borderColor: isDragging ? "#1c6c9a" : "#ccc",
-                  scale: isDragging ? "0.97" : "1",
-                // borderColor: isDragging ? 'primary.main' : 'grey.300',
-                // bgcolor: isDragging ? 'primary.light' : 'background.paper',
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                border: "2px dashed",
+                borderColor: isDragging ? "primary.main" : "grey.300",
+                bgcolor: isDragging ? "primary.light" : "background.paper",
+                textAlign: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 1,
               }}
             >
-              <UploadFileIcon sx={{ fontSize: 40, color: isDragging ? 'primary.main' : 'grey.500' }} />
-              <Typography>
-                Drag and drop files here
-              </Typography>
-            </Stack>
+              <UploadFileIcon sx={{ fontSize: 40, color: isDragging ? "primary.main" : "grey.500" }} />
+              <Typography>Drag and drop files here</Typography>
+            </Box>
 
-            {/* Resources List */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Stack spacing={1}>
               {resources.map((resource, index) => (
                 <Box
                   key={index}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 1,
                     p: 1,
-                    bgcolor: 'grey.100',
-                    borderRadius: 1
+                    bgcolor: "grey.100",
+                    borderRadius: 1,
                   }}
                 >
-                  {resource.type === 'url' ? <LinkIcon /> : <UploadFileIcon />}
-                  <Typography sx={{ flex: 1 }}>{resource.value}</Typography>
-                  <IconButton 
-                    size="small" 
+                  {resource.contentType === "URL" ? <LinkIcon /> : <UploadFileIcon />}
+                  <Typography sx={{ flex: 1 }}>{getResourceDisplayName(resource)}</Typography>
+                  <IconButton
+                    size="small"
                     onClick={() => handleResourceDelete(index)}
-                    sx={{ color: 'error.main' }}
+                    sx={{ color: "error.main" }}
                   >
                     <DeleteIcon />
                   </IconButton>
                 </Box>
               ))}
-            </Box>
+            </Stack>
           </Box>
         </Box>
       </DialogContent>
@@ -277,8 +371,8 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
         <Button onClick={handleClose} sx={{ mr: 1 }}>
           Cancel
         </Button>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           onClick={handleSubmit}
           disabled={!title.trim() || !message.trim()}
         >

@@ -52,10 +52,10 @@ import { useNavigate } from "react-router-dom";
     const [details, setDetails] = useState<{
       firstName: string;
       lastName: string;
-      email: string;
+      // email: string;
       phone: string;
       address: string;
-      collegeName: string;
+      collegeOrInstituteName: string;
       degree: string;
       graduationYear: string;
       profileBio: string;
@@ -65,10 +65,10 @@ import { useNavigate } from "react-router-dom";
     }>({
       firstName: "",
       lastName: "",
-      email: "",
+      // email: "",
       phone: "",
       address: "",
-      collegeName: "",
+      collegeOrInstituteName: "",
       degree: "",
       graduationYear: "",
       profileBio: "",
@@ -353,14 +353,14 @@ import { useNavigate } from "react-router-dom";
               />
             </Stack>
 
-            <TextField
+            {/* <TextField
               fullWidth
               label="Email"
               type="email"
               variant="outlined"
               value={details.email}
               onChange={(e) => setDetails({ ...details, email: e.target.value })}
-            />
+            /> */}
 
             <TextField
               fullWidth
@@ -417,9 +417,9 @@ import { useNavigate } from "react-router-dom";
               fullWidth
               label="College or Institute Name"
               variant="outlined"
-              value={details.collegeName}
+              value={details.collegeOrInstituteName}
               onChange={(e) =>
-                setDetails({ ...details, collegeName: e.target.value })
+                setDetails({ ...details, collegeOrInstituteName: e.target.value })
               }
             />
 

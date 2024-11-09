@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -30,6 +30,7 @@ const UserProfile = () => {
   const id = queryParams.get("id");
   const [profileDetails, setProfileDetails] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate=useNavigate()
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -57,6 +58,11 @@ const UserProfile = () => {
     fetchProfileDetails();
   }, [id]);
 
+  const handlePushTimeline=(item:any)=>{
+    setProfileDetails((prev:any)=>({...prev,nodes:[item,...prev.nodes]}))
+  }
+
+
   if (loading) {
     return <FullScreenLoader />;
   }
@@ -64,6 +70,7 @@ const UserProfile = () => {
     <Box
       sx={{
         maxWidth: "1200px",
+        width:"100%",
         margin: "40px auto",
         padding: "20px",
         minHeight: "100vh",
@@ -101,7 +108,7 @@ const UserProfile = () => {
               top: -75,
               left: 40,
             }}
-            alt="Jeremy Rose"
+            alt={profileDetails?.name}
             src="/path-to-image.jpg"
           />
           
@@ -127,14 +134,14 @@ const UserProfile = () => {
               <Stack direction="row" spacing={3} alignItems="center">
                 <Stack direction="row" spacing={1} alignItems="center">
                   <SchoolIcon color="action" />
-                  <Typography variant="body2" color="text.secondary">
-                    Massachusetts Institute of Technology
+                  <Typography color="text.secondary">
+                    {profileDetails?.collegeOrInstituteName	}
                   </Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <WorkIcon color="action" />
-                  <Typography variant="body2" color="text.secondary">
-                    Software Engineer at Google
+                  <Typography color="text.secondary" width={"max-content"}>
+                    {profileDetails?.professionalExperiences && profileDetails?.professionalExperiences[0].position}
                   </Typography>
                 </Stack>
               </Stack>
@@ -185,10 +192,10 @@ const UserProfile = () => {
               <GroupIcon color="primary" />
               <Typography variant="h6">Connections</Typography>
             </Stack>
-            <Typography variant="h3" fontWeight="600" color="primary.main">
+            <Typography variant="h3" fontWeight="600" color="primary.main" onClick={()=>navigate("/profile?id=672efc4c74620c4588c396e5")}>
               1,234
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography color="text.secondary">
               Growing your network by 15% this month
             </Typography>
           </Paper>
@@ -206,29 +213,29 @@ const UserProfile = () => {
             <Typography variant="h6" sx={{ mb: 2 }}>
               Top Skills
             </Typography>
-            <Stack spacing={2}>
-              {skills.map((skill) => (
-                <Box key={skill.name}>
-                  <Stack
+            <Stack direction={"row"} gap="12px" flexWrap={"wrap"}>
+
+              {profileDetails?.skills?.map((skill:string,index:number) => (
+                <Box key={index}>
+                  {/* <Stack
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
                     mb={1}
-                  >
-                    <Typography variant="body1" fontWeight="500">
-                      {skill.name}
-                    </Typography>
+                  > */}
                     <Chip
-                      label={skill.level}
+                      label={skill}
                       size="small"
                       sx={{
-                        bgcolor: "#7fbed5",
-                        color: theme.palette.primary.main,
-                        fontWeight: 500,
+                        alignSelf: "flex-start",
+                        bgcolor: "#e3f2fd",
+                        color: "#1976d2",
+                        fontSize: "0.75rem",
+                        height: "24px",
                       }}
                     />
-                  </Stack>
-                  <Box
+                  {/* </Stack> */}
+                  {/* <Box
                     sx={{
                       height: 6,
                       bgcolor: "grey.100",
@@ -244,11 +251,86 @@ const UserProfile = () => {
                         borderRadius: 3,
                       }}
                     />
-                  </Box>
+                  </Box> */}
                 </Box>
               ))}
             </Stack>
           </Paper>
+          <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        borderRadius: '16px',
+        border: '1px solid',
+        borderColor: 'divider',
+        mb: 3
+      }}
+    >
+      <Stack direction="row" alignItems="center" spacing={1} mb={3}>
+        <WorkIcon color="primary" />
+        <Typography variant="h6">Professional Experience</Typography>
+      </Stack>
+
+      <Stack spacing={3}>
+        {profileDetails?.professionalExperiences?.map((exp:any, index:number) => (
+          <Box key={index}>
+            <Stack direction="row" spacing={2} alignItems="flex-start">
+              <Avatar
+                sx={{
+                  bgcolor: 'primary.light',
+                  width: 45,
+                  height: 45,
+                  fontSize: '1.2rem',
+                  fontWeight: 600
+                }}
+              >
+                {exp.company[0]}
+              </Avatar>
+              
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    color: 'text.primary',
+                    mb: 0.5
+                  }}
+                >
+                  {exp.role}
+                </Typography>
+                
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontSize: '0.95rem',
+                    color: 'primary.main',
+                    fontWeight: 500,
+                    mb: 1
+                  }}
+                >
+                  {exp.company}
+                </Typography>
+                
+                <Typography
+                  fontSize={"0.8rem"}
+                  sx={{
+                    color: 'text.secondary',
+                    lineHeight: 1.6
+                  }}
+                >
+                  {exp.description}
+                </Typography>
+              </Box>
+            </Stack>
+            
+            {index < profileDetails?.professionalExperiences?.length - 1 && (
+              <Divider sx={{ mt: 3 }} />
+            )}
+          </Box>
+        ))}
+      </Stack>
+    </Paper>
         </Stack>
 
         {/* Right Column */}
@@ -280,7 +362,7 @@ const UserProfile = () => {
             </Tabs>
             <Divider sx={{ mt: 2 }} />
             <Box sx={{ p: 3 }}>
-              {activeTab === 0 && <Timeline />}
+              {activeTab === 0 && <Timeline timelineNodes={profileDetails?.nodes} handlePushTimeline={handlePushTimeline} />}
               {activeTab === 1 && <ContactInfo />}
             </Box>
           </Paper>

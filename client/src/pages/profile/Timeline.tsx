@@ -11,32 +11,32 @@ import AddToTimelineModal from "./AddToTimelineModal";
 import { useState } from "react";
 import { Add } from "@mui/icons-material";
 
-const Timeline = () => {
+const Timeline = ({timelineNodes,handlePushTimeline}:{timelineNodes:any,handlePushTimeline:(item:any)=>void}) => {
   const theme = useTheme();
   const [timelineModal, setTimelineModal] = useState<boolean>(false);
-  const timelineNodes = [
-    {
-      title: "Learning Web Development",
-      category: "Web Development",
-      content:
-        "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.,Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.,Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
-      date: "2 hours ago",
-    },
-    {
-      title: "Learning Web Development",
-      category: "Web Development",
-      content:
-        "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
-      date: "1 day ago",
-    },
-    {
-      title: "Learning Web Development",
-      category: "Web Development",
-      content:
-        "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
-      date: "3 days ago",
-    },
-  ];
+  // const timelineNodes = [
+  //   {
+  //     title: "Learning Web Development",
+  //     category: "Web Development",
+  //     content:
+  //       "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.,Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.,Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
+  //     date: "2 hours ago",
+  //   },
+  //   {
+  //     title: "Learning Web Development",
+  //     category: "Web Development",
+  //     content:
+  //       "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
+  //     date: "1 day ago",
+  //   },
+  //   {
+  //     title: "Learning Web Development",
+  //     category: "Web Development",
+  //     content:
+  //       "Today I learned web development from code with harry. We covered many topics including HTML, CSS, JavaScript, and React. It was a very productive session with lots of hands-on practice.",
+  //     date: "3 days ago",
+  //   },
+  // ];
 
   return (
     <Stack sx={{ p: 3 }}>
@@ -67,7 +67,7 @@ const Timeline = () => {
       </Stack>
 
       <Stack gap={0}>
-        {timelineNodes.map((node, index) => (
+        {timelineNodes?.map((node:any, index:number) => (
           <Stack
             key={index}
             direction="row"
@@ -142,7 +142,7 @@ const Timeline = () => {
                       color: "#666",
                     }}
                   >
-                    {node.date}
+                    {node.createdAt}
                   </Typography>
                 </Stack>
 
@@ -170,7 +170,7 @@ const Timeline = () => {
                     lineHeight: 1.5,
                   }}
                 >
-                  {node.content}
+                  {node.message}
                 </Typography>
               </Stack>
             </Paper>
@@ -180,6 +180,7 @@ const Timeline = () => {
       <AddToTimelineModal
         open={timelineModal}
         handleClose={() => setTimelineModal(false)}
+        handlePushTimeline={handlePushTimeline}
       />
     </Stack>
   );

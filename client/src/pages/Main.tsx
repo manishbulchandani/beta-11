@@ -9,6 +9,7 @@ import Onboarding from "./auth/Onboarding";
 import UserMain from "./UserMain";
 import UserProfile from "./profile/UserProfile";
 import TimelinePost from "./feed/TimelinePostCard";
+import UserFeed from "./feed/UserFeed";
 
 const Main = () => {
   const { alertText, alertSeverity, alertVisible } = useSelector(
@@ -89,7 +90,7 @@ const Main = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/feed" element={<TimelinePost />} />
+          <Route path="/feed" element={<UserFeed />} />
           <Route path="/profile/*" element={<UserProfile />} />
         </Route>
 

@@ -1,11 +1,12 @@
-import { Outlet, Route, useNavigate } from "react-router-dom";
-import UserProfile from "./profile/UserProfile";
-import TimelinePost from "./feed/TimelinePostCard";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Avatar, IconButton, Stack } from "@mui/material";
 import { Feed, Home } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { RootState } from "../features/store";
 
 const UserMain = () => {
   const navigate=useNavigate()
+  const user =useSelector((state:RootState)=>state.user.user)
   return (
     <>
       <Stack direction={"row"} justifyContent={"space-between"} bgcolor={"#ffffff"} boxShadow={"0 0 10px #48484874"} height={"56px"} alignItems={"center"} padding={"0 40px"}>
@@ -17,7 +18,7 @@ const UserMain = () => {
             border: "4px solid white",
             cursor:"pointer",
           }}
-          alt="Jeremy Rose"
+          alt={user?.name}
           src="/path-to-image.jpg"
         />
         <Stack direction={"row"} alignItems={"center"}>

@@ -11,10 +11,10 @@ export interface SignUpCredentials {
 export interface OnboardingDetails {
   firstName: string;
   lastName: string;
-  email: string;
+  // email: string;
   phone: string;
   address: string;
-  collegeName: string;
+  collegeOrInstituteName: string;
   degree: string;
   graduationYear: string;
   profileBio: string;

@@ -16,6 +16,7 @@ export interface IUser extends Document {
   generateAccessToken(): string;
   generateRefreshToken(): string;
   nodes: mongoose.Types.ObjectId[];
+  connections: mongoose.Types.ObjectId[];
   onboarding: boolean;
   phone: number;
   address: string;
@@ -67,6 +68,10 @@ const UserSchema = new Schema<IUser>(
     nodes: [{
       type: Schema.Types.ObjectId,
       ref: 'TimelineNode'
+    }],
+    connections: [{
+      type: Schema.Types.ObjectId,
+      ref: 'User'
     }],
     onboarding: {
       type: Boolean,

@@ -1,10 +1,11 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
+import { categories } from "../data/topicCategories";
 
-export enum category {
-    WEB = "WEB DEVELOPMENT",
-    APP = "APP DEVELOPMENT",
-    AIML = "AI & ML"
-};
+// export enum category {
+//     WEB = "WEB DEVELOPMENT",
+//     APP = "APP DEVELOPMENT",
+//     AIML = "AI & ML"
+// };
 
 export enum contentTypes {
     URL = "URL",
@@ -22,7 +23,7 @@ export interface ITimelineNode extends Document {
     resources: IResource[];
     userId: mongoose.Types.ObjectId;
     topics:string[];
-    category: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
+    category: String;
     createdAt?:Date;
 }
 
@@ -61,7 +62,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
         },
         category: {
             type: String,
-            enum: category,
+            enum: categories,
             required: true,
         }
     },

@@ -10,6 +10,7 @@ import UserMain from "./UserMain";
 import UserProfile from "./profile/UserProfile";
 import TimelinePost from "./feed/TimelinePostCard";
 import UserFeed from "./feed/UserFeed";
+import TimelineFeed from "./timelineSearch/SearchPage";
 
 const Main = () => {
   const { alertText, alertSeverity, alertVisible } = useSelector(
@@ -91,6 +92,7 @@ const Main = () => {
           }
         >
           <Route path="/feed" element={<UserFeed />} />
+          <Route path="/search/*" element={<TimelineFeed />} />
           <Route path="/profile/*" element={<UserProfile />} />
         </Route>
 

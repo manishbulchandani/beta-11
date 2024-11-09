@@ -3,8 +3,8 @@ import mongoose from 'mongoose'
 import moment from 'moment';
 import cloudinary from '../config/cloudinary';
 // import multer from 'multer';
-import User, { IUser, IProfessionalExperience } from '../models/user.model'
-import TimelineNode, { ITimelineNode, contentTypes, IResource, category } from '../models/timelineNode.model'
+import User from '../models/user.model'
+import TimelineNode  from '../models/timelineNode.model'
 
 
 // AddTimelineNode

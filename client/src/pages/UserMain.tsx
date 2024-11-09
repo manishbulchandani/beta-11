@@ -1,12 +1,13 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Avatar, IconButton, Stack } from "@mui/material";
-import { Feed, Home } from "@mui/icons-material";
+import { Feed, Home, Timeline } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { RootState } from "../features/store";
+// import Navbar from "./timelineSearch/SearchPage";
 import Navbar from "../components/Navbar";
+import TimelineFeed from "./timelineSearch/SearchPage";
 
 const UserMain = () => {
-  const navigate=useNavigate()
   const user =useSelector((state:RootState)=>state.user.user)
   return (
     <>

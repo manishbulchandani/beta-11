@@ -34,13 +34,6 @@ const UserProfile = () => {
 
   const [activeTab, setActiveTab] = useState(0);
 
-  const skills = [
-    { name: "React.js", level: "Advanced" },
-    { name: "Node.js", level: "Intermediate" },
-    { name: "TypeScript", level: "Advanced" },
-    { name: "UI/UX Design", level: "Intermediate" },
-    { name: "MongoDB", level: "Advanced" },
-  ];
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -59,7 +52,7 @@ const UserProfile = () => {
   }, [id]);
 
   const handlePushTimeline=(item:any)=>{
-    setProfileDetails((prev:any)=>({...prev,nodes:[item,...prev.nodes]}))
+    setProfileDetails((prev:any)=>({...prev,nodes:[item,...prev?.nodes]}))
   }
 
 

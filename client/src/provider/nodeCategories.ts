@@ -1,4 +1,4 @@
-const categories = [
+export const categories = [
     "Web Development",
     "App Development",
     "Graphic Design",

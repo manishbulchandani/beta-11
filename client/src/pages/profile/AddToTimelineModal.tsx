@@ -22,12 +22,13 @@ import AddIcon from "@mui/icons-material/Add";
 import LinkIcon from "@mui/icons-material/Link";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { addNodeToTimeline } from "../../features/timeline/timelineApi";
+import { categories } from "../../provider/nodeCategories";
 
-export enum Categories {
-  WEB = "WEB DEVELOPMENT",
-  APP = "APP DEVELOPMENT",
-  AIML = "AI & ML",
-}
+// export enum Categories {
+//   WEB = "WEB DEVELOPMENT",
+//   APP = "APP DEVELOPMENT",
+//   AIML = "AI & ML",
+// }
 
 interface Resource {
   contentType: "URL" | "FILE";
@@ -45,7 +46,7 @@ interface TimelineItem {
   title: string;
   message: string;
   resources: Resource[];
-  category: Categories;
+  category: string;
   topics: string[];
   createdAt: string;
 }
@@ -57,7 +58,7 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [category, setCategory] = useState<Categories>(Categories.WEB);
+  const [category, setCategory] = useState<string>("");
   const [newTopic, setNewTopic] = useState("");
   const [topics, setTopics] = useState<string[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -120,8 +121,8 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
     setResources(prev => [...prev, ...newResources]);
   };
 
-  const handleCategoryChange = (event: SelectChangeEvent<Categories>) => {
-    setCategory(event.target.value as Categories);
+  const handleCategoryChange = (event: SelectChangeEvent<string>) => {
+    setCategory(event.target.value);
   };
 
   const handleSubmit = async () => {
@@ -160,7 +161,7 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
       // Reset form
       setTitle("");
       setMessage("");
-      setCategory(Categories.WEB);
+      setCategory("");
       setTopics([]);
       setResources([]);
     } catch (error) {
@@ -236,7 +237,7 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
               label="Category"
               onChange={handleCategoryChange}
             >
-              {Object.values(Categories).map((cat) => (
+              {categories.map((cat) => (
                 <MenuItem key={cat} value={cat}>
                   {cat}
                 </MenuItem>

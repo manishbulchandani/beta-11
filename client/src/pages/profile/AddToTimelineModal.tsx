@@ -21,6 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import LinkIcon from '@mui/icons-material/Link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { addNodeToTimeline } from '../../features/timeline/timelineApi';
 
 interface Resource {
   type: 'url' | 'file';
@@ -87,6 +88,10 @@ const AddToTimelineModal = ({ open, handleClose }: { open: boolean; handleClose:
       resources
     };
     console.log(formData);
+    
+    addNodeToTimeline(formData)
+
+
     handleClose();
   };
 

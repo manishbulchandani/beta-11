@@ -58,7 +58,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
         topic: {
             type: String,
             enum: topics,
-            required: true,
+            required: true
         }
     },
     { timestamps: true }

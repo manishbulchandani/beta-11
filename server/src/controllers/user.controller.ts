@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import User, { IUser, IProfessionalExperience } from '../models/user.model'
-import { SocketAddress } from 'net';
 
 // GetUser
 export const handleGetUserById = async (req: Request, res: Response): Promise<Response> => {

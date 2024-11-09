@@ -14,6 +14,7 @@ export const loginThunk = createAsyncThunk(
         localStorage.setItem("accessToken",token)
       }
       dispatch(setUser(user));
+      dispatch(getUserThunk())
       return user;
     } catch (error) {
       return rejectWithValue("Login failed");
@@ -25,7 +26,11 @@ export const signUpThunk = createAsyncThunk(
   "user/signUp",
   async (credentials: SignUpCredentials, { dispatch, rejectWithValue }) => {
     try {
-      const user: User = await signUpUser(credentials);
+      const user = await signUpUser(credentials);
+      const token=user?.tokens?.accessToken
+      if(token){
+        localStorage.setItem("accessToken",token)
+      }
       dispatch(setUser(user));
       return user;
     } catch (error) {

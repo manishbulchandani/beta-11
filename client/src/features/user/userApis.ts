@@ -6,7 +6,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<User> =>
   return response.data; 
 };
 
-export const signUpUser = async (credentials: LoginCredentials): Promise<User> => {
+export const signUpUser = async (credentials: LoginCredentials): Promise<any> => {
   const response = await apiClient.post("/users/register", credentials);
   return response.data; 
 };

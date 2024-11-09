@@ -33,6 +33,7 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../features/store";
 import { showAlert } from "../../features/appFeatures/alertSlice";
+import { useNavigate } from "react-router-dom";
   
   const steps = ["Basic Info", "Education", "Experience"];
   
@@ -46,6 +47,7 @@ import { showAlert } from "../../features/appFeatures/alertSlice";
   
   const Onboarding = () => {
     const dispatch=useDispatch<AppDispatch>()
+    const navigate=useNavigate()
     const [activeStep, setActiveStep] = useState(0);
     const [details, setDetails] = useState<{
       firstName: string;
@@ -163,6 +165,7 @@ import { showAlert } from "../../features/appFeatures/alertSlice";
         try {
             const data={...details,currentSkill:undefined,professionalExperiences:experiences}
             await doOnboarding(data)
+            navigate("/")
             dispatch(showAlert({alertText:"Onboarding Successful!",alertSeverity:"success"}))
         } catch (error) {
             dispatch(showAlert({alertText:"Something Went Wrong! Please try again",alertSeverity:"error"}))
@@ -432,6 +435,7 @@ import { showAlert } from "../../features/appFeatures/alertSlice";
 
             <TextField
               fullWidth
+              type="number"
               label="Graduation Year"
               variant="outlined"
               value={details.graduationYear}

@@ -12,6 +12,8 @@ router.post('/refresh-token', authControllers.handleRefreshToken);
 
 router.get('/getUser', userControllers.handleGetUserById);
 
+router.post('/getProfile', userControllers.handleGetProfileById);
+
 router.post('/onboarding', userControllers.handleDoOnboarding);
 
 export default router;

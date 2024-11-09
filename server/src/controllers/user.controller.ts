@@ -1,19 +1,18 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
-import User, { IUser } from '../models/user.model'
+import User, { IUser, IProfessionalExperience } from '../models/user.model'
+import { SocketAddress } from 'net';
 
 // GetUser
 export const handleGetUserById = async (req: Request, res: Response): Promise<Response> => {
     try {
         const getUserRes = {
-            name: req.user?.name,
-            email: req.user?.email,
-            onboarding: req.user?.onboarding,
-            collegeOrInstitueName: req.user?.collegeOrInstitueName,
-            bio: req.user?.bio
+            name: req.user.name,
+            email: req.user.email,
+            onbarding: req.user.onbarding,
+            collegeOrInstitueName: req.user.collegeOrInstitueName,
+            bio: req.user.bio
         }
-
-        console.log(getUserRes)
       return res.status(200).json(getUserRes);
     } catch (error) {
       if (error instanceof mongoose.Error) {
@@ -24,14 +23,35 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
     }
   };
 
+// GetProfle
+export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const getProfileRes = {
+            name: req.user.name,
+            email: req.user.email,
+            collegeOrInstitueName: req.user.collegeOrInstitueName,
+            degree: req.user.degree,
+            phone: req.user.phone,
+            address: req.user.address,
+            graduationYear: req.user.graduationYear,
+            professionalExperiences: req.user.professionalExperience,
+            nodes: req.user.nodes,
+            bio: req.user.bio
+        }
+      return res.status(200).json(getProfileRes);
+    } catch (error) {
+      if (error instanceof mongoose.Error) {
+        return res.status(400).json({ error: error.message });
+      } else {
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+    }
+  };
 
 // Onboarding
 export const handleDoOnboarding = async (req: Request, res: Response): Promise<Response> => {
     const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences } = req.body;
-
-    console.log(firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences)
-
-    
+  
     try {
       if (!req.user) {
         return res.status(401).json({ error: 'Unauthorized (user not found)' });
@@ -61,7 +81,7 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
         req.user._id,
         { 
           onboarding: true,
-          name: firstName + lastName,
+          name: firstName + " " + lastName,
           phone: phone,
           address: address,
           bio: bio,
@@ -86,4 +106,3 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
       }
     }
   };
-  

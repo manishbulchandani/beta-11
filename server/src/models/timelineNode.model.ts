@@ -1,28 +1,34 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-enum ContentType {
+export enum topics {
+    WEB = "WEB DEVELOPMENT",
+    APP = "APP DEVELOPMENT",
+    AIML = "AI & ML"
+};
+
+export enum contentTypes {
     URL = "URL",
     FILE = "FILE"
-}
+};
 
 export interface IResource extends Document {
-    contentType: ContentType;
-    content: string;
+    contentType: "URL" | "FILE";
+    content: string | undefined;
 }
 
 export interface ITimelineNode extends Document {
     title: string;
-    messege: string;
+    message: string;
     resources: IResource[];
     userId: mongoose.Types.ObjectId;
-    topic: string;
+    topic: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
 }
 
 const ResourceSchema = new Schema<IResource>(
     {
         contentType: {
             type: String,
-            enum: Object.values(ContentType),
+            enum: contentTypes,
             required: true
         },
         content: {
@@ -39,7 +45,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             type: String,
             required: true
         },
-        messege: {
+        message: {
             type: String,
             required: true
         },
@@ -48,7 +54,11 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             ref: 'User'
         },
         resources: [ResourceSchema],
-        topic: String
+        topic: {
+            type: String,
+            enum: topics,
+            required: true,
+        }
     },
     { timestamps: true }
 );

@@ -9,7 +9,7 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
         const getUserRes = {
             name: req.user.name,
             email: req.user.email,
-            onbarding: req.user.onbarding,
+            onbarding: req.user.onboarding,
             collegeOrInstitueName: req.user.collegeOrInstitueName,
             bio: req.user.bio
         }
@@ -26,19 +26,9 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 // GetProfle
 export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const getProfileRes = {
-            name: req.user.name,
-            email: req.user.email,
-            collegeOrInstitueName: req.user.collegeOrInstitueName,
-            degree: req.user.degree,
-            phone: req.user.phone,
-            address: req.user.address,
-            graduationYear: req.user.graduationYear,
-            professionalExperiences: req.user.professionalExperience,
-            nodes: req.user.nodes,
-            bio: req.user.bio
-        }
-      return res.status(200).json(getProfileRes);
+        const userProfile = await User.findById(req.user._id).select('-password').populate('nodes').exec();
+
+        return res.status(200).json(userProfile);
     } catch (error) {
       if (error instanceof mongoose.Error) {
         return res.status(400).json({ error: error.message });

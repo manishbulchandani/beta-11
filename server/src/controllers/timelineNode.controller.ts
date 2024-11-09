@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
+import moment from 'moment';
 import cloudinary from '../config/cloudinary';
 // import multer from 'multer';
 import User, { IUser, IProfessionalExperience } from '../models/user.model'
@@ -106,21 +107,58 @@ export const handleGetTimelineNodeOrderByTopic = async (req: Request, res: Respo
 
 // GetFeed
 export const handleGetFeed = async (req: Request, res: Response) => {
-    try {
-      const userId = req.user.id;
+  try {
+    const userId = req.user.id;
 
-      const user = await User.findById(userId).select('connections');
+    const user = await User.findById(userId).select('following');
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-      if (!user) return res.status(404).json({ message: 'User not found' });
+    const following = user.following;
+
+    const feedPosts = await TimelineNode.find({ userId: { $in: following } })
+      .populate('userId')
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    const formattedFeedPosts = feedPosts.map(post => {
+      const createdAt = post.createdAt;
+      let timestamp;
+
+      const daysDifference = moment().diff(moment(createdAt), 'days');
+
+      if (daysDifference < 3) {
+        timestamp = moment(createdAt).fromNow();
+      } else {
+        timestamp = moment(createdAt).format('D MMM YYYY');
+      }
+
+      return { ...post, timestamp };
+    });
+
+    res.status(200).json(formattedFeedPosts);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to load feed', error });
+  }
+};
+
+// export const handleGetFeed = async (req: Request, res: Response) => {
+//     try {
+//       const userId = req.user.id;
+
+//       const user = await User.findById(userId).select('following');
+
+//       if (!user) return res.status(404).json({ message: 'User not found' });
   
-      const connections = user.connections;
+//       const following = user.following;
   
-      const feedPosts = await TimelineNode.find({ author: { $in: connections } }).populate('userId')
-        .sort({ createdAt: -1 })
-        .limit(20);
+//       const feedPosts = await TimelineNode.find({ author: { $in: following } })
+//         .populate('userId')
+//         .sort({ createdAt: -1 })
+//         .limit(20);
   
-      res.status(200).json(feedPosts);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to load feed', error });
-    }
-  };
+//       res.status(200).json(feedPosts);
+//     } catch (error) {
+//       res.status(500).json({ message: 'Failed to load feed', error });
+//     }
+//   };

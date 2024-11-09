@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import User, { IUser, IProfessionalExperience } from '../models/user.model'
-import { SocketAddress } from 'net';
 
 // GetUser
 export const handleGetUserById = async (req: Request, res: Response): Promise<Response> => {
@@ -27,9 +26,19 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
     try {
         const {userId} = req.body;
-        const userProfile = await User.findById(userId ?? req?.user?._id).select('-password').populate('nodes').exec();
         
-        return res.status(200).json(userProfile);
+        if (userId) {
+          const userProfile = await User.findById(userId).select('-password').populate('nodes').exec();
+
+          if (!userProfile) return res.status(404).json("User not found");
+
+          const isFollowing = userProfile.following.includes(req.user._id);
+          const isFollower = userProfile.followers.includes(req.user._id);
+
+          return res.status(200).json({...userProfile, isFollower, isFollowing});
+        }
+
+        return res.status(404).json("User not found");
     } catch (error) {
       if (error instanceof mongoose.Error) {
         return res.status(400).json({ error: error.message });
@@ -97,3 +106,38 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
       }
     }
   };
+
+// Follow
+export const handleFollow = async (req: Request, res: Response): Promise<Response> => {
+  const { otherUserId } = req.body;
+
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized (user not found)' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.user._id)) {
+      return res.status(400).json({ error: 'Invalid Issuer ID' });
+    }
+
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $push: { following : otherUserId} },
+      { new: true }
+    ).exec();
+
+    await User.findByIdAndUpdate(
+      otherUserId,
+      { $push: { followers : req.user._id} },
+      { new: true }
+    ).exec();
+
+    return res.status(200).json({ error: 'task compelted successfully.'});
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      return res.status(400).json({ error: error.message });
+    } else {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+};

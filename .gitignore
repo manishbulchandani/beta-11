@@ -23,6 +23,7 @@ server/dist/
 # Environment variables
 client/.env
 server/.env
+.env
 
 # IDE and editor settings
 .vscode/

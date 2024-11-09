@@ -21,6 +21,7 @@ export interface IUser extends Document {
   phone: number;
   address: string;
   degree: string;
+  skills:string[];
   graduationYear: number;
   professionalExperiences: IProfessionalExperience[];
   collegeOrInstituteName: string;
@@ -73,6 +74,9 @@ const UserSchema = new Schema<IUser>(
       type: Schema.Types.ObjectId,
       ref: 'User'
     }],
+    skills:{
+      type:[String],
+    },
     onboarding: {
       type: Boolean,
       required: true,

@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-export enum topics {
+export enum category {
     WEB = "WEB DEVELOPMENT",
     APP = "APP DEVELOPMENT",
     AIML = "AI & ML"
@@ -18,10 +18,11 @@ export interface IResource extends Document {
 
 export interface ITimelineNode extends Document {
     title: string;
-    messege: string;
+    message: string;
     resources: IResource[];
     userId: mongoose.Types.ObjectId;
-    topic: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
+    topics:string[];
+    category: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
 }
 
 const ResourceSchema = new Schema<IResource>(
@@ -45,7 +46,7 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             type: String,
             required: true
         },
-        messege: {
+        message: {
             type: String,
             required: true
         },
@@ -54,9 +55,12 @@ const TimelineNodeSchema = new Schema<ITimelineNode>(
             ref: 'User'
         },
         resources: [ResourceSchema],
-        topic: {
+        topics:{
+            type:[String]
+        },
+        category: {
             type: String,
-            enum: topics,
+            enum: category,
             required: true,
         }
     },

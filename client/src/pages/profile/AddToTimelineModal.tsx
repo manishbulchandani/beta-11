@@ -131,10 +131,10 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
     formData.append("title", title);
     formData.append("message", message);
     formData.append("category", category);
-    
     topics.forEach((topic, i) => {
       formData.append(`topics[${i}]`, topic);
     });
+
 
     resources.forEach((resource, i) => {
       if (resource.contentType === "FILE" && resource.content instanceof File) {
@@ -146,6 +146,7 @@ const AddToTimelineModal: React.FC<AddToTimelineModalProps> = ({
     });
 
     try {
+      console.log("formData",JSON.stringify(formData))
       await addNodeToTimeline(formData);
       handlePushTimeline({
         title,

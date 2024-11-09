@@ -141,7 +141,7 @@ const UserProfile = () => {
                 <Stack direction="row" spacing={1} alignItems="center">
                   <WorkIcon color="action" />
                   <Typography color="text.secondary" width={"max-content"}>
-                    {profileDetails?.professionalExperiences && profileDetails?.professionalExperiences[0].position}
+                    {profileDetails?.professionalExperiences && profileDetails?.professionalExperiences[0]?.position}
                   </Typography>
                 </Stack>
               </Stack>

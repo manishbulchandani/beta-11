@@ -8,7 +8,7 @@ const useFeed = () => {
   const handleFetchUserFeed = async () => {
     setLoading(true)
     try {
-      const response = await apiClient.get("/timelineNode/getFeed");
+      const response = await apiClient.get("/timelineNodes/getFeed");
       setFeed(response.data);
     } catch (error) {
       console.log(error);

@@ -27,12 +27,8 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
     try {
         const {userId} = req.body;
-        let userProfile;
+        const userProfile = await User.findById(userId ?? req?.user?._id).select('-password').populate('nodes').exec();
         
-        if (userId) {
-          userProfile = await User.findById(userId).select('-password').populate('nodes').exec();
-        }
-
         return res.status(200).json(userProfile);
     } catch (error) {
       if (error instanceof mongoose.Error) {

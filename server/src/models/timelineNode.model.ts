@@ -23,6 +23,7 @@ export interface ITimelineNode extends Document {
     userId: mongoose.Types.ObjectId;
     topics:string[];
     category: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
+    createdAt?:Date;
 }
 
 const ResourceSchema = new Schema<IResource>(

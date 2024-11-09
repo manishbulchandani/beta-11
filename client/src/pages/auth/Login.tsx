@@ -186,7 +186,7 @@ const LoginPage: React.FC = () => {
                     fullWidth
                     name="password"
                     value={credentials.password}
-                    // label="Enter Password"
+                    label="Enter Password"
                     type={passwordRevealed ? "text" : "password"}
                     variant="outlined"
                     // autoComplete="current-password"

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,8 +12,9 @@ import {
   Link,
   Tooltip,
   Divider,
-  Paper
-} from '@mui/material';
+  Paper,
+  Stack,
+} from "@mui/material";
 import {
   Favorite,
   FavoriteBorder,
@@ -27,66 +28,77 @@ import {
   NavigateBefore,
   PictureAsPdf,
   Download,
-  Image as ImageIcon
-} from '@mui/icons-material';
+  Image as ImageIcon,
+} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
-const TimelinePost = () => {
-  const [expanded, setExpanded] = useState(false);
+const TimelinePost = ({ feedPost }: { feedPost: any }) => {
+  const [expanded, setExpanded] = useState(true);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+  const navigate=useNavigate()
   // Enhanced hardcoded data with images and PDFs
-  const post = {
-    user: {
-      name: "John Developer",
-      avatar: "/api/placeholder/40/40",
-      title: "Frontend Engineer"
-    },
-    timestamp: "2 hours ago",
-    title: "Learning Web Development",
-    content: "Today I learned Next.js fundamentals including routing, data fetching, and server-side rendering. The architectural patterns in Next.js are fascinating and provide a great foundation for building modern web applications.",
-    topics: [
-      "Next.js Apis",
-      "Redux Toolkit usage in react",
-    ],
-    resources: [
-      {
-        type: 'image',
-        url: 'https://images.unsplash.com/photo-1719937206098-236a481a2b6d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8',
-        title: 'Architecture Diagram'
-      },
-      {
-        type: 'image',
-        url: 'https://plus.unsplash.com/premium_photo-1686090450800-d6ca456243c7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyfHx8ZW58MHx8fHx8',
-        title: 'Component Structure'
-      },
-      {
-        type: 'pdf',
-        url: 'example.pdf',
-        title: 'Next.js Documentation.pdf',
-        size: '2.4 MB'
-      },
-      {
-        type: 'url',
-        title: 'Next.js Documentation',
-        url: 'https://github.com/example'
-      },
-      {
-        type: 'code',
-        title: 'Code Repository',
-        url: 'https://github.com/example'
-      }
-    ],
-    stats: {
-      likes: 42,
-      comments: 8
-    }
-  };
 
-  const images = post.resources.filter(resource => resource.type === 'image');
-  const pdfs = post.resources.filter(resource => resource.type === 'pdf');
-  const links = post.resources.filter(resource => resource.type === 'url' || resource.type === 'code');
+  // const post = {
+  //   user: {
+  //     name: "John Developer",
+  //     avatar: "/api/placeholder/40/40",
+  //     title: "Frontend Engineer"
+  //   },
+  //   timestamp: "2 hours ago",
+  //   title: "Learning Web Development",
+  //   content: "Today I learned Next.js fundamentals including routing, data fetching, and server-side rendering. The architectural patterns in Next.js are fascinating and provide a great foundation for building modern web applications.",
+  //   topics: [
+  //     "Next.js Apis",
+  //     "Redux Toolkit usage in react",
+  //   ],
+  //   resources: [
+  //     {
+  //       type: 'image',
+  //       url: 'https://images.unsplash.com/photo-1719937206098-236a481a2b6d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8',
+  //       title: 'Architecture Diagram'
+  //     },
+  //     {
+  //       type: 'image',
+  //       url: 'https://plus.unsplash.com/premium_photo-1686090450800-d6ca456243c7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyfHx8ZW58MHx8fHx8',
+  //       title: 'Component Structure'
+  //     },
+  //     {
+  //       type: 'pdf',
+  //       url: 'example.pdf',
+  //       title: 'Next.js Documentation.pdf',
+  //       size: '2.4 MB'
+  //     },
+  //     {
+  //       type: 'url',
+  //       title: 'Next.js Documentation',
+  //       url: 'https://github.com/example'
+  //     },
+  //     {
+  //       type: 'code',
+  //       title: 'Code Repository',
+  //       url: 'https://github.com/example'
+  //     }
+  //   ],
+  //   stats: {
+  //     likes: 42,
+  //     comments: 8
+  //   }
+  // };
+
+  const images = feedPost?.resources.filter(
+    (resource: any) =>
+      resource.contentType === "FILE" && !resource.content.endsWith(".pdf")
+  );
+  const pdfs = feedPost?.resources.filter(
+    (resource: any) =>
+      resource.contentType === "FILE" && resource.content.endsWith(".pdf")
+  );
+  const links = feedPost?.resources.filter(
+    (resource: any) =>
+      resource.contentType === "URL" || resource.contentType === "code"
+  );
 
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -100,29 +112,27 @@ const TimelinePost = () => {
     <Card
       sx={{
         maxWidth: 700,
-        mx: 'auto',
+        width: "100%",
+        mx: "auto",
         mb: 3,
         borderRadius: 2,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        '&:hover': {
-          boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
-          transform: 'translateY(-2px)',
+        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+        "&:hover": {
+          boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
+          transform: "translateY(-2px)",
         },
-        transition: 'all 0.2s ease-in-out'
+        transition: "all 0.2s ease-in-out",
       }}
     >
       {/* Header Section */}
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Avatar
-          src={post.user.avatar}
-          sx={{ width: 48, height: 48 }}
-        />
+      <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 2 }}>
+        <Avatar src={feedPost?.user?.avatar} sx={{ width: 48, height: 48 }} />
         <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            {post.user.name}
+          <Typography variant="subtitle1" onClick={()=>navigate(`/profile?id=${feedPost?.userId?._id}`)} sx={{ fontWeight: 600,cursor:"pointer","&:hover":{color:"#3fa2ff"} }}>
+            {feedPost?.userId?.name}
           </Typography>
           <Typography fontSize={"0.8rem"} color="text.secondary">
-            {post.user.title} • {post.timestamp}
+            {feedPost?.userId?.title} • {feedPost?.createdAt}
           </Typography>
         </Box>
       </Box>
@@ -134,10 +144,10 @@ const TimelinePost = () => {
           sx={{
             mb: 2,
             fontWeight: 600,
-            color: 'primary.main'
+            color: "primary.main",
           }}
         >
-          {post.title}
+          {feedPost?.title}
         </Typography>
 
         {/* Content */}
@@ -145,26 +155,26 @@ const TimelinePost = () => {
           sx={{
             mb: 2,
             // color: 'text.primary',
-            lineHeight: 1.6
+            lineHeight: 1.6,
           }}
         >
-          {post.content}
+          {feedPost?.message}
         </Typography>
 
         {/* Topics */}
-        <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          {post.topics.map((topic, index) => (
+        <Box sx={{ mb: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+          {feedPost?.topics?.map((topic: any, index: number) => (
             <Chip
               key={index}
               label={topic}
               size="small"
               sx={{
-                bgcolor: 'primary.50',
-                color: 'primary.main',
-                '&:hover': {
-                  bgcolor: 'primary.100',
+                bgcolor: "primary.50",
+                color: "primary.main",
+                "&:hover": {
+                  bgcolor: "primary.100",
                 },
-                fontWeight: 500
+                fontWeight: 500,
               }}
             />
           ))}
@@ -174,30 +184,30 @@ const TimelinePost = () => {
         <Box
           sx={{
             mt: 2,
-            display: expanded ? 'flex' : 'none',
-            flexDirection: 'column',
-            gap: 2
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
           }}
         >
           {/* Image Carousel */}
           {images.length > 0 && (
-            <Paper 
-              elevation={0} 
-              sx={{ 
-                position: 'relative',
-                bgcolor: 'grey.100',
+            <Paper
+              elevation={0}
+              sx={{
+                position: "relative",
+                bgcolor: "grey.100",
                 borderRadius: 2,
-                overflow: 'hidden'
+                overflow: "hidden",
               }}
             >
               <Box
                 component="img"
-                src={images[currentImageIndex].url}
-                alt={images[currentImageIndex].title}
+                src={images[currentImageIndex].content}
+                alt={images[currentImageIndex].content}
                 sx={{
-                  width: '100%',
+                  width: "100%",
                   height: 300,
-                  objectFit: 'cover',
+                  objectFit: "cover",
                 }}
               />
               {images.length > 1 && (
@@ -205,12 +215,12 @@ const TimelinePost = () => {
                   <IconButton
                     onClick={handlePrevImage}
                     sx={{
-                      position: 'absolute',
+                      position: "absolute",
                       left: 8,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      bgcolor: 'background.paper',
-                      '&:hover': { bgcolor: 'background.paper' },
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      bgcolor: "background.paper",
+                      "&:hover": { bgcolor: "background.paper" },
                     }}
                   >
                     <NavigateBefore />
@@ -218,12 +228,12 @@ const TimelinePost = () => {
                   <IconButton
                     onClick={handleNextImage}
                     sx={{
-                      position: 'absolute',
+                      position: "absolute",
                       right: 8,
-                      top: '50%',
-                      transform: 'translateY(-50%)',
-                      bgcolor: 'background.paper',
-                      '&:hover': { bgcolor: 'background.paper' },
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      bgcolor: "background.paper",
+                      "&:hover": { bgcolor: "background.paper" },
                     }}
                   >
                     <NavigateNext />
@@ -233,11 +243,11 @@ const TimelinePost = () => {
               <Typography
                 variant="caption"
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   bottom: 8,
                   left: 8,
-                  bgcolor: 'rgba(0,0,0,0.6)',
-                  color: 'white',
+                  bgcolor: "rgba(0,0,0,0.6)",
+                  color: "white",
                   px: 1,
                   py: 0.5,
                   borderRadius: 1,
@@ -250,34 +260,45 @@ const TimelinePost = () => {
 
           {/* PDFs */}
           {pdfs.length > 0 && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {pdfs.map((pdf, index) => (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {pdfs.map((pdf: any, index: number) => (
                 <Paper
                   key={index}
                   sx={{
                     p: 2,
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 2,
-                    bgcolor: 'grey.50',
-                    '&:hover': { bgcolor: 'grey.100' }
+                    bgcolor: "grey.50",
+                    "&:hover": { bgcolor: "grey.100" },
                   }}
                 >
                   <PictureAsPdf color="error" />
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2">{pdf.title}</Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {pdf.size}
+                  <Stack direction="row" alignItems={"center"} sx={{ flex: 1,}}>
+                    <Typography
+                      fontSize="0.8rem"
+                      sx={{
+                        width:"70%",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {pdf.content}
                     </Typography>
-                  </Box>
+                    {/* <Typography variant="caption" color="text.secondary">
+                      {pdf.size}
+                    </Typography> */}
                   <IconButton
+                    onClick={()=>window.open(pdf.content)}
                     sx={{
-                      color: 'primary.main',
-                      '&:hover': { bgcolor: 'primary.50' }
+                      color: "primary.main",
+                      "&:hover": { bgcolor: "primary.50" },
                     }}
                   >
                     <Download />
                   </IconButton>
+                  </Stack>
                 </Paper>
               ))}
             </Box>
@@ -285,28 +306,28 @@ const TimelinePost = () => {
 
           {/* Links */}
           {links.length > 0 && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {links.map((resource, index) => (
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {links.map((resource: any, index: number) => (
                 <Box
                   key={index}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 1,
                     p: 1,
-                    bgcolor: 'grey.50',
+                    bgcolor: "grey.50",
                     borderRadius: 1,
                     border: 1,
-                    borderColor: 'grey.200'
+                    borderColor: "grey.200",
                   }}
                 >
-                  {resource.type === 'url' ? <LinkIcon /> : <Code />}
+                  {resource.contentType === "URL" ? <LinkIcon /> : <Code />}
                   <Link
                     href={resource.url}
                     underline="hover"
-                    sx={{ flex: 1 }}
+                    sx={{ flex: 1, fontFamily: "sans-serif" }}
                   >
-                    {resource.title}
+                    {resource.content}
                   </Link>
                 </Box>
               ))}
@@ -318,36 +339,31 @@ const TimelinePost = () => {
       <Divider />
 
       {/* Actions Section */}
-      <CardActions sx={{ px: 2, py: 1, justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <CardActions sx={{ px: 2, py: 1, justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <IconButton
               onClick={() => setLiked(!liked)}
-              sx={{ color: liked ? 'error.main' : 'inherit' }}
+              sx={{ color: liked ? "error.main" : "inherit" }}
             >
               {liked ? <Favorite /> : <FavoriteBorder />}
             </IconButton>
             <Typography variant="body2" color="text.secondary">
-              {post.stats.likes}
+              {feedPost?.stats?.likes}
             </Typography>
           </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <IconButton>
               <Comment />
             </IconButton>
             <Typography variant="body2" color="text.secondary">
-              {post.stats.comments}
+              {feedPost?.stats?.comments}
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Tooltip title="Show Resources">
-            <IconButton onClick={() => setExpanded(!expanded)}>
-              {expanded ? <ImageIcon /> : <ImageIcon />}
-            </IconButton>
-          </Tooltip>
+        <Box sx={{ display: "flex", gap: 1 }}>
           <Tooltip title="Save">
             <IconButton onClick={() => setSaved(!saved)}>
               {saved ? <Bookmark /> : <BookmarkBorder />}

@@ -15,10 +15,10 @@ const UserFeed = () => {
   }
   return (
     <Stack>
-      <TimelinePost/>
-      {/* {feed?.map((feedPost,index)=>(
-        <TimelinePost feedPost={feedPost}/>
-      ))} */}
+      {/* <TimelinePost/> */}
+      {feed?.map((feedPost:any,index:number)=>(
+        <TimelinePost key={index} feedPost={feedPost}/>
+      ))}
     </Stack>
   )
 }

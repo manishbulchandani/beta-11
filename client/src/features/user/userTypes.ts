@@ -17,7 +17,7 @@ export interface OnboardingDetails {
   collegeOrInstituteName: string;
   degree: string;
   graduationYear: string;
-  profileBio: string;
+  bio: string;
   skills: string[];
   professionalExperiences: { position: string; company: string; description: string }[];
 }

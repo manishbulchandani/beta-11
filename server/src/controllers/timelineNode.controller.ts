@@ -112,7 +112,7 @@ export const handleGetFeed = async (req: Request, res: Response) => {
 
     const user = await User.findById(userId).select('following');
     if (!user) return res.status(404).json({ message: 'User not found' });
-
+    
     const following = user.following;
 
     const feedPosts = await TimelineNode.find({ userId: { $in: following } })

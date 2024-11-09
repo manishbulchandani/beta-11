@@ -24,33 +24,29 @@ export const handleGetUserById = async (req: Request, res: Response): Promise<Re
 
 // GetProfle
 export const handleGetProfileById = async (req: Request, res: Response): Promise<Response> => {
-    try {
-        const {userId} = req.body;
-        
-        if (userId) {
-          const userProfile = await User.findById(userId).select('-password').populate('nodes').exec();
+  try {
+    const userId = req.body.userId || req.user._id;
 
-          if (!userProfile) return res.status(404).json("User not found");
+    const userProfile = await User.findById(userId).select('-password').populate('nodes').exec();
 
-          const isFollowing = userProfile.following.includes(req.user._id);
-          const isFollower = userProfile.followers.includes(req.user._id);
+    if (!userProfile) return res.status(404).json("User not found");
 
-          return res.status(200).json({...userProfile, isFollower, isFollowing});
-        }
+    const isFollowing = userProfile.following.includes(req.user._id);
+    const isFollower = userProfile.followers.includes(req.user._id);
 
-        return res.status(404).json("User not found");
-    } catch (error) {
-      if (error instanceof mongoose.Error) {
-        return res.status(400).json({ error: error.message });
-      } else {
-        return res.status(500).json({ error: 'Internal server error' });
-      }
+    return res.status(200).json({ ...userProfile.toObject(), isFollower, isFollowing });
+  } catch (error) {
+    if (error instanceof mongoose.Error) {
+      return res.status(400).json({ error: error.message });
+    } else {
+      return res.status(500).json({ error: 'Internal server error' });
     }
-  };
+  }
+};
 
 // Onboarding
 export const handleDoOnboarding = async (req: Request, res: Response): Promise<Response> => {
-    const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences } = req.body;
+    const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences,skills } = req.body;
   
     try {
       if (!req.user) {
@@ -85,6 +81,7 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
           phone: phone,
           address: address,
           bio: bio,
+          skill:skills,
           degree: degree,
           graduationYear: graduationYear,
           collegeOrInstituteName: collegeOrInstituteName,

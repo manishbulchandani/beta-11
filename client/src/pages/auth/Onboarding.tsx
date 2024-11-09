@@ -58,7 +58,7 @@ import { useNavigate } from "react-router-dom";
       collegeOrInstituteName: string;
       degree: string;
       graduationYear: string;
-      profileBio: string;
+      bio: string;
       skills: string[];
       currentSkill: string;
     //   avatar: string | null;
@@ -71,7 +71,7 @@ import { useNavigate } from "react-router-dom";
       collegeOrInstituteName: "",
       degree: "",
       graduationYear: "",
-      profileBio: "",
+      bio: "",
       skills: [],
       currentSkill: "",
     //   avatar: null,
@@ -394,9 +394,9 @@ import { useNavigate } from "react-router-dom";
               label="Profile Bio"
               placeholder="Tell us about yourself..."
               variant="outlined"
-              value={details.profileBio}
+              value={details.bio}
               onChange={(e) =>
-                setDetails({ ...details, profileBio: e.target.value })
+                setDetails({ ...details, bio: e.target.value })
               }
             />
           </Stack>

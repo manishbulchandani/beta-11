@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Alert, Snackbar } from "@mui/material";
 import { AppDispatch, RootState } from "../features/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,20 +18,30 @@ const Main = () => {
   const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.user
   );
-  const onboarding = user?.onboarding;
-
-  const [hasRedirected, setHasRedirected] = useState(
-    localStorage.getItem("hasRedirected") === "true"
-  );
   const location = useLocation();
 
-  useEffect(() => {
-    if (isAuthenticated && !hasRedirected) {
-      // Redirect to /feed only on initial login
-      setHasRedirected(true);
-      localStorage.setItem("hasRedirected", "true");
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
     }
-  }, [isAuthenticated, hasRedirected]);
+
+    if (!user?.onboarding) {
+      return <Navigate to="/onboarding" replace />;
+    }
+
+    return <>{children}</>;
+  };
+
+  const AuthRoute = ({ children }: { children: React.ReactNode }) => {
+    if (isAuthenticated) {
+      if (!user?.onboarding) {
+        return <Navigate to="/onboarding" replace />;
+      }
+      return <Navigate to={(location.state?.from?.pathname || "/feed")} replace />;
+    }
+
+    return <>{children}</>;
+  };
 
   return (
     <>
@@ -41,17 +50,17 @@ const Main = () => {
         <Route
           path="/login"
           element={
-            isAuthenticated ? (
-              <Navigate to={onboarding ? "/feed" : "/onboarding"} replace />
-            ) : (
+            <AuthRoute>
               <LoginPage />
-            )
+            </AuthRoute>
           }
         />
         <Route
           path="/sign-up"
           element={
-            isAuthenticated ? <Navigate to="/" replace /> : <SignUpPage />
+            <AuthRoute>
+              <SignUpPage />
+            </AuthRoute>
           }
         />
 
@@ -59,12 +68,14 @@ const Main = () => {
         <Route
           path="/onboarding"
           element={
-            !isAuthenticated ? (
-              <Navigate to="/login" replace />
-            ) : onboarding ? (
-              <Navigate to="/" replace />
+            isAuthenticated ? (
+              user?.onboarding ? (
+                <Navigate to="/feed" replace />
+              ) : (
+                <Onboarding />
+              )
             ) : (
-              <Onboarding />
+              <Navigate to="/login" replace />
             )
           }
         />
@@ -73,29 +84,24 @@ const Main = () => {
         <Route
           path="/"
           element={
-            isAuthenticated ? (
-              onboarding ? (
-                hasRedirected ? (
-                  <UserMain />
-                ) : (
-                  <Navigate to="/feed" replace />
-                )
-              ) : (
-                <Navigate to="/onboarding" replace />
-              )
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <ProtectedRoute>
+              <UserMain />
+            </ProtectedRoute>
           }
         >
           <Route path="/feed" element={<TimelinePost />} />
           <Route path="/profile/*" element={<UserProfile />} />
         </Route>
 
-        {/* Fallback for undefined routes */}
         <Route
           path="*"
-          element={<Navigate to={isAuthenticated ? location.pathname : "/login"} replace />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/feed" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
         />
       </Routes>
 

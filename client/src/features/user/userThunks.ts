@@ -9,12 +9,12 @@ export const loginThunk = createAsyncThunk(
   async (credentials: LoginCredentials, { dispatch, rejectWithValue }) => {
     try {
       const user: User = await loginUser(credentials);
-      const token=user.accessToken
-      if(token){
-        localStorage.setItem("accessToken",token)
+      const token = user.accessToken;
+      if (token) {
+        localStorage.setItem("accessToken", token);
       }
       dispatch(setUser(user));
-      dispatch(getUserThunk())
+      dispatch(getUserThunk());
       return user;
     } catch (error) {
       return rejectWithValue("Login failed");
@@ -27,9 +27,9 @@ export const signUpThunk = createAsyncThunk(
   async (credentials: SignUpCredentials, { dispatch, rejectWithValue }) => {
     try {
       const user = await signUpUser(credentials);
-      const token=user?.tokens?.accessToken
-      if(token){
-        localStorage.setItem("accessToken",token)
+      const token = user?.tokens?.accessToken;
+      if (token) {
+        localStorage.setItem("accessToken", token);
       }
       dispatch(setUser(user));
       return user;
@@ -39,19 +39,15 @@ export const signUpThunk = createAsyncThunk(
   }
 );
 
-
-
 export const getUserThunk = createAsyncThunk(
-  "user/signUp",
-  async (_,{ dispatch, rejectWithValue }) => {
+  "user/getUser",
+  async (_, { rejectWithValue }) => {
     try {
       const user: User = await getUser();
-      dispatch(setUser(user));
       return user;
     } catch (error) {
+      console.log(error)
       return rejectWithValue("Error Initializing user");
     }
   }
 );
-
-

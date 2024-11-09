@@ -18,14 +18,18 @@ import SchoolIcon from '@mui/icons-material/School';
 import GroupIcon from '@mui/icons-material/Group';
 import WorkIcon from '@mui/icons-material/Work';
 import ContactInfo from "./ContactInfo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Timeline from "./Timeline";
+import { fetchUserProfile } from "../../features/user/userApis";
+import FullScreenLoader from "../../components/FullScreenLoader";
 
 const UserProfile = () => {
   const location = useLocation();
   const theme = useTheme();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
+  const [profileDetails, setProfileDetails] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -37,6 +41,25 @@ const UserProfile = () => {
     { name: "MongoDB", level: "Advanced" },
   ];
 
+  useEffect(() => {
+    const fetchProfileDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchUserProfile(id);
+        setProfileDetails(response);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileDetails();
+  }, [id]);
+
+  if (loading) {
+    return <FullScreenLoader />;
+  }
   return (
     <Box
       sx={{
@@ -91,14 +114,14 @@ const UserProfile = () => {
           >
             <Box>
               <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-                Jeremy Rose
+                {profileDetails?.name}
               </Typography>
               <Typography 
                 variant="body1" 
                 color="text.secondary" 
                 sx={{ mb: 2, fontSize: "1.1rem" }}
               >
-                Software Developer | Building Scalable web applications
+               {profileDetails?.bio}
               </Typography>
               
               <Stack direction="row" spacing={3} alignItems="center">

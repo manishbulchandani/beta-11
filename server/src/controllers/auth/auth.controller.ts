@@ -44,8 +44,10 @@ export const handleRegisterUser = async (req: Request, res: Response) => {
       password,
       onboarding: false 
     });
+    // console.log("here");
 
     await user.save();
+    // console.log("here");
 
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();

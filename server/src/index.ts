@@ -57,5 +57,3 @@ const portArgIndex = args.indexOf('--port');
 const PORT = portArgIndex !== -1 ? Number(args[portArgIndex + 1]) : Number(process.env.PORT) || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-

@@ -54,19 +54,10 @@ const UserSchema = new Schema<IUser>(
       required: true,
       unique: true,
     },
-    phone: {
-      type: Number,
-      unique: true
-    },
-    address: {
-      type: String,
-    },
-    degree: {
-      type: String,
-    },
-    graduationYear: {
-      type: Number,
-    },
+    phone: Number,
+    address: String,
+    degree: String,
+    graduationYear: Number,
     professionalExperiences: [professionalExperienceSchema],
     password: {
       type: String,

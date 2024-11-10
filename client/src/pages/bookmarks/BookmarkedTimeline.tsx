@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   Box,
   Checkbox,
@@ -8,8 +8,7 @@ import {
   LinearProgress,
   Container,
   Grid,
-  Card,
-  CardContent,
+//   Card,
   Divider,
   styled,
   Stack,
@@ -37,15 +36,15 @@ const RoadmapNode = styled(Box)(({ theme }) => ({
   },
 }));
 
-const NodeContent = styled(Card)(({ theme, selected }) => ({
-  flex: 1,
-  cursor: "pointer",
-  transition: "all 0.3s ease",
-  //   border: selected ? `2px solid ${theme.palette.primary.main}` : 'none',
-  "&:hover": {
-    transform: "translateX(8px)",
-  },
-}));
+// const NodeContent = styled(Card)(({ theme, selected }) => ({
+//   flex: 1,
+//   cursor: "pointer",
+//   transition: "all 0.3s ease",
+//   //   border: selected ? `2px solid ${theme.palette.primary.main}` : 'none',
+//   "&:hover": {
+//     transform: "translateX(8px)",
+//   },
+// }));
 
 const BookmarkedTimelines = () => {
   // Sample data
@@ -84,7 +83,9 @@ const BookmarkedTimelines = () => {
   const [completedNodes, setCompletedNodes] = useState(new Set());
   const [selectedNode, setSelectedNode] = useState(roadmapData[0]);
 
-  const handleNodeToggle = (nodeId) => {
+  setSelectedNode
+
+  const handleNodeToggle = (nodeId:any) => {
     const newCompleted = new Set(completedNodes);
     if (newCompleted.has(nodeId)) {
       newCompleted.delete(nodeId);
@@ -102,7 +103,7 @@ const BookmarkedTimelines = () => {
         {/* Left side - Roadmap nodes */}
         <Grid item xs={12} md={6}>
           <Stack gap="10px">
-            {roadmapData.map((node, index) => (
+            {roadmapData.map((node) => (
               <RoadmapNode key={node.id}>
                 <Checkbox
                   checked={completedNodes.has(node.id)}
@@ -137,7 +138,7 @@ const BookmarkedTimelines = () => {
 
             <Divider sx={{ my: 3 }} />
 
-            
+
             {/* Selected node details */}
             <Typography variant="h5" gutterBottom>
               {selectedNode.title}

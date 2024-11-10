@@ -1,4 +1,4 @@
-import { Feed, Home, Search, NotificationsNone } from '@mui/icons-material';
+import { Feed, Home, Search } from '@mui/icons-material';
 import { 
   Avatar, 
   IconButton, 

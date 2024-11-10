@@ -8,7 +8,6 @@ import {
   Chip,
   IconButton,
   Avatar,
-  Collapse,
   Link,
   Tooltip,
   Divider,
@@ -28,12 +27,11 @@ import {
   NavigateBefore,
   PictureAsPdf,
   Download,
-  Image as ImageIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const TimelinePost = ({ feedPost }: { feedPost: any }) => {
-  const [expanded, setExpanded] = useState(true);
+  // const [expanded, setExpanded] = useState(true);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

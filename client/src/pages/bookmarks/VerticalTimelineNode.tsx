@@ -1,4 +1,4 @@
-import { CalendarToday, School } from "@mui/icons-material";
+import { CalendarToday } from "@mui/icons-material";
 import { Box, Paper, Typography, useTheme, alpha, Chip } from "@mui/material";
 import { useState } from "react";
 
@@ -13,6 +13,8 @@ export const VerticalTimelineNode = ({
 }) => {
     const [selectedNode,setSelectedNode]=useState()
   const theme = useTheme();
+  selectedNode
+  
   return (
     <Box sx={{ position: "relative", mb: isLast ? 0 : 3 }}>
       {/* {!isLast && (

@@ -1,7 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import FullScreenLoader from "./components/FullScreenLoader";
 import Main from "./pages/Main";
-import { AppDispatch, RootState } from "./features/store";
+import { AppDispatch, } from "./features/store";
 import { useEffect, useState } from "react";
 import { getUserThunk } from "./features/user/userThunks";
 import { setInitialized } from "./features/user/userSlice";

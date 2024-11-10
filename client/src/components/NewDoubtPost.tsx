@@ -1,5 +1,5 @@
 // Import necessary dependencies
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Stack,
   Card,

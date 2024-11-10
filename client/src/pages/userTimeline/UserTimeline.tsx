@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Avatar,
@@ -6,7 +6,7 @@ import {
   Paper,
   Chip,
   Link,
-  Fade,
+//   Fade,
   IconButton,
   useTheme,
   alpha,
@@ -19,10 +19,10 @@ import {
 } from "@mui/material";
 import {
   School,
-  Launch,
+//   Launch,
   CalendarToday,
-  BookmarkBorder,
-  Timeline as TimelineIcon,
+//   BookmarkBorder,
+//   Timeline as TimelineIcon,
   NavigateBefore,
   NavigateNext,
   PictureAsPdf,
@@ -33,7 +33,7 @@ import {
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchSingleTimeline } from "../../features/timeline/timelineApi";
-import TimelinePost from "../feed/TimelinePostCard";
+// import TimelinePost from "../feed/TimelinePostCard";
 
 const UserTimeline = () => {
   const [selectedNode, setSelectedNode] = useState<any>(null);
@@ -573,7 +573,7 @@ const UserTimeline = () => {
         <Stack direction={"row"} gap="12px">
           {data?.timeline.map((node: any) => (
             <Stack key={node._id} spacing={2} >
-              {node?.resources?.filter((item:any)=>item.contentType==="FILE").map((item: any,index:number) => (
+              {node?.resources?.filter((item:any)=>item.contentType==="FILE").map((item: any) => (
                <img src={item.content} style={{maxWidth:"480px"}}/>
               ))}
             </Stack>

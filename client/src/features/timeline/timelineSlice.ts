@@ -25,7 +25,7 @@ const timelineSlice = createSlice({
     //   state.isAuthenticated = false;
     // },
   },
-  extraReducers: (builder) => {
+  // extraReducers: (builder) => {
     // builder.addCase(loginThunk.fulfilled, (state, action) => {
     //   state.timeline = action.payload;
     //   state.isAuthenticated = true;
@@ -34,7 +34,7 @@ const timelineSlice = createSlice({
     //   state.isAuthenticated=true;
     //   state.timeline=action.payload
     // })
-  },
+  // },
 });
 
 // export const { settimeline, logouttimeline } = timelineSlice.actions;

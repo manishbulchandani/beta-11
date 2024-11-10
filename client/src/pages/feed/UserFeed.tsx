@@ -1,8 +1,8 @@
-import { Box, CircularProgress, Stack } from "@mui/material"
+import { CircularProgress, Stack } from "@mui/material"
 import useFeed from "../../hooks/useFeed"
 import { useEffect } from "react"
 import TimelinePost from "./TimelinePostCard"
-import NewDoubtPost from "../../components/NewDoubtPost"
+// import NewDoubtPost from "../../components/NewDoubtPost"
 
 const UserFeed = () => {
   const {loading,userFeed,handleFetchUserFeed}=useFeed()

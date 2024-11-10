@@ -12,7 +12,7 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
+// import EmailIcon from "@mui/icons-material/Email";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SchoolIcon from "@mui/icons-material/School";
 import GroupIcon from "@mui/icons-material/Group";
@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import Timeline from "./Timeline";
 import { fetchUserProfile, followOther } from "../../features/user/userApis";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import { Check, ForkRight, RampRight } from "@mui/icons-material";
+import { Check } from "@mui/icons-material";
 
 const UserProfile = () => {
   const location = useLocation();

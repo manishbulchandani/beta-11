@@ -22,7 +22,7 @@ export interface IUser extends Document {
   phone: number;
   address: string;
   degree: string;
-  skills:string[];
+  skills: string[];
   graduationYear: number;
   professionalExperiences: IProfessionalExperience[];
   collegeOrInstituteName: string;

@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post('/addDoubt', doubtControllers.handleAddDoubt);
 
-router.post('/getDoubts', doubtControllers.handleGetDoubts);
+router.get('/getDoubts', doubtControllers.handleGetDoubts);
 
 router.post('/addThread', doubtControllers.handleAddThread);
 

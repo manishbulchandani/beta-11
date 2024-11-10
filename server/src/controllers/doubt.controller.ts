@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
-import axios from 'axios';
+import axios from 'axios'
 import Doubt, { IDoubt, IReply } from '../models/doubt.model'
 import User from '../models/user.model'
+import Keyword from '../models/keyword.model'
 
 interface DoubtResponse {
   userId?: string;
@@ -37,16 +38,18 @@ export const handleAddDoubt = async (req: Request, res: Response): Promise<Respo
     }
   };
 
-// GetDoubts
+// GetDoubt
 export const handleGetDoubts = async (req: Request, res: Response) => {
     try {
-      const {user_keywords} = req.body;
+      const keywords = await Keyword.findOne({userId: req.user._id}, 'keywords').exec();
 
-      const response = await axios.post('http://192.168.126.38:5001/get_relevant_posts', { user_keywords });
+      // console.log(keywords);
+      
+      const response = await axios.post('http://192.168.126.38:5001/get_relevant_posts', { "user_keywords": keywords?.keywords });
       const posts: DoubtResponse[] = response.data.relevant_posts;
       // console.log(posts.data.relevant_posts);
 
-      console.log(posts);
+      // console.log(posts);
       
       const results: DoubtResponse[] = await Promise.all(
         posts.map(async (doubt) => {
@@ -62,7 +65,7 @@ export const handleGetDoubts = async (req: Request, res: Response) => {
   
       return res.status(200).json(results);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return res.status(500).json({ message: 'Failed to load feed', error });
     }
   };
@@ -74,7 +77,7 @@ export const handleAddThread = async (req: Request, res: Response) => {
     try {
         await Doubt.findByIdAndUpdate(
             doubtId,
-            { $push: { threads : { content, userId: req.user._id }} },
+            { $push: { threads : { content, userId: req.user._id, name: req.user.name }} },
             { new: true }
         ).exec();
 

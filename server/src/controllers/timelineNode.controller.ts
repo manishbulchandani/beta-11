@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import moment from "moment";
+import axios from 'axios';
 import cloudinary from "../config/cloudinary";
-// import multer from 'multer';
 import User from "../models/user.model";
 import TimelineNode from "../models/timelineNode.model";
+import Keyword, { IKeyword } from "../models/keyword.model";
 
 // AddTimelineNode
 export const handleAddTimelineNode = async (
@@ -19,7 +20,7 @@ export const handleAddTimelineNode = async (
     const { title, topics, message, category } = req.body;
     let resources = req.body.resources || [];
 
-    console.log(req.files);
+    // console.log(req.files);
 
     if (!title || !message || !category) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -50,7 +51,6 @@ export const handleAddTimelineNode = async (
       }
     }
 
-    // Create new timeline node
     const newTimelineNode = new TimelineNode({
       userId: req.user._id,
       title,
@@ -60,10 +60,8 @@ export const handleAddTimelineNode = async (
       resources,
     });
 
-    // Save timeline node
     const createdTimelineNode = await newTimelineNode.save();
 
-    // Update user's nodes
     await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -72,10 +70,19 @@ export const handleAddTimelineNode = async (
       { new: true }
     );
 
-    return res.status(201).json({
-      message: "Timeline node created successfully",
-      node: createdTimelineNode,
-    });
+    // adding user_keywords
+    const response = await axios.post('http://192.168.126.38:5001/extract_keywords', { text: message });
+
+    for(const res of response.data.keywords) {
+        const newKeyword: IKeyword = new Keyword({
+          userId: req.user._id,
+          content: res,
+        });
+
+      await newKeyword.save();
+    }
+ 
+    return res.status(201).json({ message: "Timeline node created successfully" });
   } catch (error) {
     console.error("Timeline node creation error:", error);
 

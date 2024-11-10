@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import User, { IUser, IProfessionalExperience } from '../models/user.model'
+import Keyword, { IKeyword } from '../models/keyword.model'
 
 // GetUser
 export const handleGetUserById = async (req: Request, res: Response): Promise<Response> => {
@@ -46,7 +47,7 @@ export const handleGetProfileById = async (req: Request, res: Response): Promise
 
 // Onboarding
 export const handleDoOnboarding = async (req: Request, res: Response): Promise<Response> => {
-    const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences,skills } = req.body;
+    const { firstName, lastName, phone, address, collegeOrInstituteName, bio, degree, graduationYear, professionalExperiences, skills } = req.body;
   
     try {
       if (!req.user) {
@@ -81,7 +82,7 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
           phone: phone,
           address: address,
           bio: bio,
-          skill:skills,
+          skills: skills,
           degree: degree,
           graduationYear: graduationYear,
           collegeOrInstituteName: collegeOrInstituteName,
@@ -93,6 +94,13 @@ export const handleDoOnboarding = async (req: Request, res: Response): Promise<R
       if (!updatedIssuer) {
         return res.status(404).json({ error: 'User not found' });
       }
+
+      const newKeyword: IKeyword = new Keyword({
+        userId: req.user._id,
+        keywords: skills
+      });
+  
+      await newKeyword.save();
   
       return res.status(200).json({ error: 'User onboarded successfully.'});
     } catch (error) {

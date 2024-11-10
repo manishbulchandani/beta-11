@@ -138,3 +138,38 @@ export const handleFollow = async (req: Request, res: Response): Promise<Respons
     }
   }
 };
+
+// 
+// export const handleAddFavouriteTimelineNode = async (req: Request, res: Response): Promise<Response> => {
+//   const { otherUserId, category } = req.body;
+
+//   try {
+//     if (!req.user) {
+//       return res.status(401).json({ error: 'Unauthorized (user not found)' });
+//     }
+
+//     if (!mongoose.Types.ObjectId.isValid(req.user._id)) {
+//       return res.status(400).json({ error: 'Invalid Issuer ID' });
+//     }
+
+//     await User.findByIdAndUpdate(
+//       req.user._id,
+//       { $push: { following : otherUserId} },
+//       { new: true }
+//     ).exec();
+
+//     await User.findByIdAndUpdate(
+//       otherUserId,
+//       { $push: { followers : req.user._id} },
+//       { new: true }
+//     ).exec();
+
+//     return res.status(200).json({ error: 'task compelted successfully.'});
+//   } catch (error) {
+//     if (error instanceof mongoose.Error) {
+//       return res.status(400).json({ error: error.message });
+//     } else {
+//       return res.status(500).json({ error: 'Internal server error' });
+//     }
+//   }
+// };

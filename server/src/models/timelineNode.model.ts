@@ -21,7 +21,7 @@ export interface ITimelineNode extends Document {
     message: string;
     resources: IResource[];
     userId: mongoose.Types.ObjectId;
-    topics:string[];
+    topics: string[];
     category: "WEB DEVELOPMENT" | "APP DEVELOPMENT" | "AI & ML";
     createdAt?:Date;
 }

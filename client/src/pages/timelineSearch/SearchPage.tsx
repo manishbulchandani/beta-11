@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  Stack,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -47,6 +48,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ data,query }) => {
         sx={{ mb: 3, maxWidth: "100%", boxShadow: 3, borderRadius: "12px" }}
       >
         <CardContent>
+            <Stack direction="row">
           <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
             <Avatar
               src={"data.user.avatar"}
@@ -59,6 +61,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ data,query }) => {
               </Typography>
             </Box>
           </Box>
+          </Stack>
 
           <Box sx={{ position: "relative" }}>
             <Box

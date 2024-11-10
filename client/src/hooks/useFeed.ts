@@ -22,7 +22,7 @@ const useFeed = () => {
   const handleFetchDoubtsFeed=async()=>{
     setLoading(true)
     try {
-      const response = await apiClient.get("/timelineNodes/getFeed");
+      const response = await apiClient.post("/doubts/getDoubts");
       setDoubtsFeed(response.data);
     } catch (error) {
       console.log(error);

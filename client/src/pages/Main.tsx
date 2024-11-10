@@ -13,6 +13,8 @@ import UserFeed from "./feed/UserFeed";
 import TimelineFeed from "./timelineSearch/SearchPage";
 import FeedMain from "./FeedMain";
 import UserTimeline from "./userTimeline/UserTimeline";
+import RoadmapTracker from "./bookmarks/BookmarkedTimeline";
+import BookmarkedTimelines from "./bookmarks/BookmarkedTimeline";
 
 const Main = () => {
   const { alertText, alertSeverity, alertVisible } = useSelector(
@@ -49,6 +51,7 @@ const Main = () => {
 
   return (
     <>
+    {/* <RoadmapTracker/> */}
       <Routes>
         {/* Public Routes */}
         <Route
@@ -97,6 +100,7 @@ const Main = () => {
           <Route path="/timelines/*" element={<UserTimeline />} />
           <Route path="/search/*" element={<TimelineFeed />} />
           <Route path="/profile/*" element={<UserProfile />} />
+          <Route path="/bookmarks" element={<BookmarkedTimelines />} />
         </Route>
 
         <Route

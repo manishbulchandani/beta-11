@@ -1,3 +1,4 @@
+// Import necessary dependencies
 import React, { useState } from 'react';
 import {
   Stack,
@@ -17,6 +18,7 @@ import {
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ImageIcon from '@mui/icons-material/Image';
 import CloseIcon from '@mui/icons-material/Close';
+import { addDoubt } from '../features/user/userApis';
 
 const NewDoubtPost = () => {
   const [open, setOpen] = useState(false);
@@ -52,9 +54,13 @@ const NewDoubtPost = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Doubt:', doubt);
-    console.log('Image:', image);
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append('content', doubt);
+    if (image) {
+      formData.append('file', image);
+    }
+    await addDoubt(formData);
     handleClose();
   };
 
@@ -74,35 +80,35 @@ const NewDoubtPost = () => {
         onClick={handleClickOpen}
       >
         <CardContent sx={{ p: 2 }}>
-          <Stack 
-            direction="row" 
-            spacing={1.5} 
-            alignItems="center" 
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
             sx={{ py: 1 }}
           >
-            <HelpOutlineIcon 
-              sx={{ 
-                fontSize: 28, 
+            <HelpOutlineIcon
+              sx={{
+                fontSize: 28,
                 color: 'primary.main',
                 backgroundColor: (theme) => theme.palette.primary.light + '20',
                 p: 1,
                 borderRadius: '50%'
-              }} 
+              }}
             />
             <Box>
-              <Typography 
-                variant="subtitle1" 
-                component="div" 
-                sx={{ 
+              <Typography
+                variant="subtitle1"
+                component="div"
+                sx={{
                   fontWeight: 600,
                   mb: 0.5
                 }}
               >
                 Have a doubt?
               </Typography>
-              <Typography 
-                variant="body2" 
-                color="text.secondary" 
+              <Typography
+                variant="body2"
+                color="text.secondary"
                 sx={{ fontSize: '0.875rem' }}
               >
                 Ask your peers for help
@@ -124,7 +130,7 @@ const NewDoubtPost = () => {
           }
         }}
       >
-        <DialogTitle sx={{ 
+        <DialogTitle sx={{
           pb: 1,
           borderBottom: '1px solid',
           borderColor: 'divider'
@@ -156,10 +162,10 @@ const NewDoubtPost = () => {
             multiline
             rows={4}
             value={doubt}
-            onChange={(e) => setDoubt(e.target.value)}
+            onChange={(e:any) => setDoubt(e.target.value)}
             sx={{ mb: 3 }}
           />
-          
+
           <Paper
             variant="outlined"
             sx={{
@@ -169,7 +175,7 @@ const NewDoubtPost = () => {
               borderStyle: 'dashed'
             }}
             onDrop={handleImageDrop}
-            onDragOver={(e) => e.preventDefault()}
+            onDragOver={(e:any) => e.preventDefault()}
           >
             <input
               type="file"
@@ -182,7 +188,7 @@ const NewDoubtPost = () => {
               <Button
                 component="span"
                 startIcon={<ImageIcon />}
-                sx={{ 
+                sx={{
                   mb: 1,
                   '&:hover': {
                     backgroundColor: 'rgba(0, 0, 0, 0.04)'
@@ -197,8 +203,8 @@ const NewDoubtPost = () => {
                 <img
                   src={previewUrl}
                   alt="Preview"
-                  style={{ 
-                    maxWidth: '100%', 
+                  style={{
+                    maxWidth: '100%',
                     maxHeight: 200,
                     borderRadius: 4
                   }}
@@ -225,25 +231,25 @@ const NewDoubtPost = () => {
             )}
           </Paper>
         </DialogContent>
-        <DialogActions sx={{ 
+        <DialogActions sx={{
           p: 2.5,
           borderTop: '1px solid',
           borderColor: 'divider'
         }}>
-          <Button 
+          <Button
             onClick={handleClose}
-            sx={{ 
+            sx={{
               color: 'text.secondary',
               px: 3
             }}
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             variant="contained"
             disabled={!doubt.trim()}
-            sx={{ 
+            sx={{
               px: 3,
               borderRadius: 1.5
             }}

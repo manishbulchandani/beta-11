@@ -12,6 +12,9 @@ function App() {
   const [loading,setLoading]=useState(true)
 
   useEffect(() => {
+    setTimeout(()=>{
+      setLoading(false)
+    },1000)
     const initializeUser = async () => {
       try {
         await dispatch(getUserThunk()).unwrap();

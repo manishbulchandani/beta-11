@@ -2,10 +2,9 @@ import express, { NextFunction } from "express";
 import multer from "multer";
 import * as timelineNodeControllers from "../../controllers/timelineNode.controller";
 
-const storage = multer.memoryStorage();
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
       const allowedTypes = [
         "image/jpeg",

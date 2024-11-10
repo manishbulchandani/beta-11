@@ -18,7 +18,7 @@ const DoubtsFeed = () => {
     <Stack gap={"12px"}>
         <NewDoubtPost/>
       {/* <TimelinePost/> */}
-      <Stack margin={"auto"}>
+      <Stack margin={"auto"} width={"100%"}>
       {doubtsFeed?.map((feedPost:any,index:number)=>(
         <DoubtsPost key={index} feedPost={feedPost}/>
       ))}

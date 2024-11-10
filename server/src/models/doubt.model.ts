@@ -3,6 +3,8 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 export interface IReply extends Document {
     userId: mongoose.Types.ObjectId;
     content: string;
+    username:string;
+    date:Date;
 }
 
 export interface IDoubt extends Document {
@@ -18,6 +20,12 @@ const ReplySchema = new Schema<IReply>({
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    username:{
+        type:String
+    },
+    date:{
+        type:Date
     },
     content: {
         type: String,

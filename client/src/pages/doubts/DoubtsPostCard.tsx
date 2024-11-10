@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,32 +10,32 @@ import {
   Button,
   IconButton,
   Paper,
-  Stack
+  Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import SendIcon from '@mui/icons-material/Send';
+import SendIcon from "@mui/icons-material/Send";
+import { addThread } from "../../features/user/userApis";
 
 const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
   const navigate = useNavigate();
-  const [comment, setComment] = useState('');
-  const [displayedComments, setDisplayedComments] = useState(3);
-  
+  const [comment, setComment] = useState("");
+  const [displayedComments, setDisplayedComments] = useState(2);
+
   const handleCommentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('New comment:', comment);
-    setComment('');
+    addThread(feedPost._id, comment);
+    setComment("");
   };
 
   const loadMoreComments = () => {
-    setDisplayedComments(prev => prev + 3);
+    setDisplayedComments((prev) => prev + 3);
   };
-  
 
   return (
     <Card
       sx={{
-        maxWidth: 700,
         width: "100%",
+        maxWidth: "1200px",
         mx: "auto",
         mb: 3,
         borderRadius: 2,
@@ -60,7 +60,7 @@ const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
               "&:hover": { color: "#3fa2ff" },
             }}
           >
-            {feedPost?.userId?.name}
+            {feedPost?.username}
           </Typography>
           <Typography fontSize={"0.9rem"} color="text.secondary">
             {feedPost?.userId?.title} • {feedPost?.createdAt}
@@ -76,8 +76,20 @@ const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
             lineHeight: 1.6,
           }}
         >
-          {feedPost?.message}
+          {feedPost?.content}
         </Typography>
+        {feedPost?.fileUrl && (
+          <Box
+            component="img"
+            src={feedPost.fileUrl}
+            sx={{
+              width: "100%",
+              height: 300,
+              borderRadius: "12px",
+              objectFit: "cover",
+            }}
+          />
+        )}
       </CardContent>
 
       <Divider />
@@ -89,16 +101,13 @@ const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
           component="form"
           onSubmit={handleCommentSubmit}
           sx={{
-            display: 'flex',
+            display: "flex",
             gap: 2,
             mb: 3,
-            alignItems: 'flex-start'
+            alignItems: "flex-start",
           }}
         >
-          <Avatar 
-            src="/api/placeholder/32/32"
-            sx={{ width: 32, height: 32 }}
-          />
+          <Avatar src="/api/placeholder/32/32" sx={{ width: 32, height: 32 }} />
           <TextField
             fullWidth
             size="small"
@@ -107,25 +116,25 @@ const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
             placeholder="Add a comment..."
             variant="outlined"
             sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3
-              }
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 3,
+              },
             }}
           />
-          <IconButton 
+          <IconButton
             type="submit"
             disabled={!comment.trim()}
             color="primary"
             sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                bgcolor: 'primary.dark'
+              bgcolor: "primary.main",
+              color: "white",
+              "&:hover": {
+                bgcolor: "primary.dark",
               },
-              '&.Mui-disabled': {
-                bgcolor: 'rgba(0, 0, 0, 0.12)',
-                color: 'rgba(0, 0, 0, 0.26)'
-              }
+              "&.Mui-disabled": {
+                bgcolor: "rgba(0, 0, 0, 0.12)",
+                color: "rgba(0, 0, 0, 0.26)",
+              },
             }}
           >
             <SendIcon />
@@ -134,55 +143,66 @@ const DoubtsPost = ({ feedPost }: { feedPost: any }) => {
 
         {/* Comments List */}
         <Stack spacing={2}>
-          {feedPost?.comments?.slice(0, displayedComments).map((comment: any, index: number) => (
-            <Box key={index} sx={{ display: 'flex', gap: 2 }}>
-              <Avatar
-                src={comment.user?.avatar || '/api/placeholder/32/32'}
-                alt={comment.user?.name}
-                sx={{ width: 32, height: 32 }}
-              />
-              <Box sx={{ flex: 1 }}>
-                <Paper
-                  elevation={0}
-                  sx={{
-                    p: 1.5,
-                    bgcolor: 'grey.50',
-                    borderRadius: 2
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    onClick={() => navigate(`/profile?id=${comment.user?._id}`)}
+          {feedPost?.threads
+            ?.slice(0, displayedComments)
+            .map((comment: any, index: number) => (
+              <Box key={index} sx={{ display: "flex", gap: 2 }}>
+                <Avatar
+                  src={comment.user?.avatar || "/api/placeholder/32/32"}
+                  alt={comment.user?.name}
+                  sx={{ width: 32, height: 32 }}
+                />
+                <Box sx={{ flex: 1 }}>
+                  <Paper
+                    elevation={0}
                     sx={{
-                      cursor: 'pointer',
-                      '&:hover': { color: 'primary.main' }
+                      p: 1.5,
+                      bgcolor: "grey.50",
+                      borderRadius: 2,
                     }}
                   >
-                    {comment.user?.name}
-                  </Typography>
-                  <Typography variant="body2">
-                    {comment.text}
-                  </Typography>
-                </Paper>
-                <Typography 
-                  variant="caption" 
-                  color="text.secondary"
-                  sx={{ mt: 0.5, display: 'block' }}
-                >
-                  {comment.createdAt}
-                </Typography>
+                    <Stack direction={"row"} justifyContent={"space-between"}>
+                      <Typography
+                        variant="subtitle2"
+                        onClick={() =>
+                          navigate(`/profile?id=${comment.user?._id}`)
+                        }
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": { color: "primary.main" },
+                        }}
+                      >
+                        {comment.username}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ mt: 0.5, display: "block" }}
+                      >
+                        {new Date(comment.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </Typography>
+                    </Stack>
+                    <Typography fontSize={"0.9rem"}>
+                      {comment.content}
+                    </Typography>
+                  </Paper>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))}
         </Stack>
 
-        {feedPost?.comments?.length > displayedComments && (
+        {feedPost?.threads?.length > displayedComments && (
           <Button
             onClick={loadMoreComments}
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, textTransform: "none" }}
             color="primary"
           >
-            View more comments ({feedPost.comments.length - displayedComments} remaining)
+            View more comments ({feedPost.threads.length - displayedComments}{" "}
+            remaining)
           </Button>
         )}
       </Box>

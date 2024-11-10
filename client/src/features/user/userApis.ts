@@ -62,3 +62,39 @@ export const followOther=async (userId:string|null): Promise<any> => {
     throw error; 
   }
 };
+
+
+// ////////////////////////////////////////////////////////
+
+
+
+
+export const addDoubt = async (doubtData:FormData) => {
+  try {
+    const response = await apiClient.post("/doubts/addDoubt", doubtData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('addDoubt error:', error);
+    throw error;
+  }
+};
+
+export const addThread = async (doubtId:string,content:string) => {
+  try {
+    const response = await apiClient.post("/doubts/addThread",{doubtId,content});
+    return response.data;
+  } catch (error) {
+    console.error('addDoubt error:', error);
+    throw error;
+  }
+};
+
+
+
+
+
+

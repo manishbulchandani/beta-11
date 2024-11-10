@@ -8,6 +8,11 @@ export interface IProfessionalExperience extends Document {
   description: string;
 }
 
+export interface IFavTimeline {
+  userId: mongoose.Types.ObjectId;
+  category: string;
+}
+
 export interface IUser extends Document {
   name: string;
   email: string;
@@ -22,29 +27,40 @@ export interface IUser extends Document {
   phone: number;
   address: string;
   degree: string;
-  skills:string[];
+  skills: string[];
   graduationYear: number;
   professionalExperiences: IProfessionalExperience[];
   collegeOrInstituteName: string;
   bio: string;
+  favTimelines: IFavTimeline[];
 }
 
-const professionalExperienceSchema = new Schema<IProfessionalExperience>(
-  {
-    position: {
-      type: String,
-      required: true
-    },
-    company: {
-      type: String,
-      required: true
-    },
-    description: {
-      type: String,
-      required: true
-    }
-  }
-);
+const professionalExperienceSchema = new Schema<IProfessionalExperience>({
+  position: {
+    type: String,
+    required: true,
+  },
+  company: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
+
+const favTimelineSchema = new Schema<IFavTimeline>({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  category: {
+    type: String,
+    required: true,
+  },
+});
 
 const UserSchema = new Schema<IUser>(
   {
@@ -67,21 +83,28 @@ const UserSchema = new Schema<IUser>(
       required: true,
       minlength: 6,
     },
-    nodes: [{
-      type: Schema.Types.ObjectId,
-      ref: 'TimelineNode'
-    }],
-    following: [{
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    followers: [{
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }],
-    skills:{
-      type:[String],
+    nodes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "TimelineNode",
+      },
+    ],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    skills: {
+      type: [String],
     },
+    favTimelines: [favTimelineSchema],
     onboarding: {
       type: Boolean,
       required: true,

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
-import axios from 'axios';
+import axios from 'axios'
 import Doubt, { IDoubt, IReply } from '../models/doubt.model'
 import User from '../models/user.model'
 import cloudinary from '../config/cloudinary';
@@ -77,7 +77,7 @@ export const handleAddDoubt = async (req: Request, res: Response): Promise<Respo
   }
 };
 
-// GetDoubts
+// GetDoubt
 export const handleGetDoubts = async (req: Request, res: Response) => {
     try {
       // const {user_keywords} = req.body;

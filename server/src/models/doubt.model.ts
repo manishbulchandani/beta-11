@@ -2,6 +2,7 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 
 export interface IReply extends Document {
     userId: mongoose.Types.ObjectId;
+    name: string;
     content: string;
     username:string;
     date:Date;
@@ -31,7 +32,8 @@ const ReplySchema = new Schema<IReply>({
         type: String,
         required: true
     }
-});
+},{timestamps: true}
+);
 
 const DoubtSchema = new Schema<IDoubt>({
     userId: {

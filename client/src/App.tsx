@@ -2,14 +2,15 @@ import { useDispatch, useSelector } from "react-redux";
 import FullScreenLoader from "./components/FullScreenLoader";
 import Main from "./pages/Main";
 import { AppDispatch, RootState } from "./features/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getUserThunk } from "./features/user/userThunks";
 import { setInitialized } from "./features/user/userSlice";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
-  const { isInitializing } = useSelector((state: RootState) => state.user);
-  
+  // const { isInitializing } = useSelector((state: RootState) => state.user);
+  const [loading,setLoading]=useState(true)
+
   useEffect(() => {
     const initializeUser = async () => {
       try {
@@ -18,7 +19,7 @@ function App() {
         console.error('Failed to initialize user:', error);
       }
       finally{
-        console.log("sdf")
+        setLoading(false)
         dispatch(setInitialized())
       }
     };
@@ -26,10 +27,9 @@ function App() {
     initializeUser();
   }, [dispatch]);
 
-  if (isInitializing) {
-    return <FullScreenLoader />;
-  }
-
+ if(loading){
+  return <FullScreenLoader/>
+ }
   return (
     <>
       <Main />

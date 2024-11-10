@@ -24,3 +24,17 @@ export const searchTimeline = async (query: string): Promise<any> => {
     return {message:"Something went wrong!"}
   }
 };
+
+
+export const searchSingleTimeline = async (query: string,userId:string): Promise<any> => {
+  try {
+    const response = await apiClient.post("/timelineNodes/searchSingleTimeline", {
+      category: query,
+      userId:userId
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return {message:"Something went wrong!"}
+  }
+};

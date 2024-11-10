@@ -51,3 +51,14 @@ export const fetchUserProfile = async (userId:string|null): Promise<any> => {
     throw error; 
   }
 };
+
+
+export const followOther=async (userId:string|null): Promise<any> => {
+  try {
+    const response = await apiClient.post("/users/follow",{otherUserId:userId});
+    return response.data;
+  } catch (error) {
+    console.error('GetUser error:', error);
+    throw error; 
+  }
+};

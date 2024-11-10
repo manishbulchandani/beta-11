@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import { TimelineNode as ITimelineNode } from "../pages/timelineSearch/SearchPage";
 
 interface TimelineNodeProps extends ITimelineNode {
@@ -9,9 +9,10 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({
   title,
   message,
   createdAt,
+  topics,
   isLast,
 }) => {
-  console.log(title,message,createdAt,isLast)
+  console.log(title,message,topics,createdAt,isLast)
   return (
     <Box
       sx={{
@@ -105,6 +106,23 @@ const TimelineNode: React.FC<TimelineNodeProps> = ({
           >
             {message}
           </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={"4px"}>
+          {
+            topics.map((topic,index)=>( <Chip
+              key={index}
+              label={topic}
+              size="small"
+              sx={{
+                alignSelf: "flex-start",
+                bgcolor: "#e3f2fd",
+                color: "#1976d2",
+                fontSize: "0.75rem",
+                height: "24px",
+              }}
+            />))
+          }
+          </Stack>
+          
         </Box>
       </Paper>
 

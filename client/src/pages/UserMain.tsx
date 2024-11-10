@@ -6,6 +6,7 @@ import { RootState } from "../features/store";
 // import Navbar from "./timelineSearch/SearchPage";
 import Navbar from "../components/Navbar";
 import TimelineFeed from "./timelineSearch/SearchPage";
+import UserTimeline from "./userTimeline/UserTimeline";
 
 const UserMain = () => {
   const user =useSelector((state:RootState)=>state.user.user)
@@ -15,7 +16,7 @@ const UserMain = () => {
      <Stack marginTop={"12px"}>
       <Outlet/>
      </Stack>
-      {/* <UserProfile/> */}
+      {/* <UserTimeline/> */}
       {/* <TimelinePost /> */}
       {/* <Route path="/profile/*" element={<UserProfile />} /> */}
       {/* <Route path="/feed" element={<TimelinePost />} /> */}

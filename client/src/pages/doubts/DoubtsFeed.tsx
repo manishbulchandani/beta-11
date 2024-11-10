@@ -1,29 +1,30 @@
-import { Box, CircularProgress, Stack } from "@mui/material"
+import {  CircularProgress, Stack } from "@mui/material"
 import useFeed from "../../hooks/useFeed"
 import { useEffect } from "react"
-import TimelinePost from "./TimelinePostCard"
+import DoubtsPost from "./DoubtsPostCard"
 import NewDoubtPost from "../../components/NewDoubtPost"
 
-const UserFeed = () => {
-  const {loading,userFeed,handleFetchUserFeed}=useFeed()
+const DoubtsFeed = () => {
+  const {loading,doubtsFeed,handleFetchDoubtsFeed}=useFeed()
 
   useEffect(()=>{
-    handleFetchUserFeed()
+    handleFetchDoubtsFeed()
   },[])
 
   if(loading){
     <Stack width={"100%"} justifyContent={"center"} alignItems={"center"}><CircularProgress/></Stack>
   }
   return (
-    <Stack direction={"row"}>
+    <Stack gap={"12px"}>
+        <NewDoubtPost/>
       {/* <TimelinePost/> */}
       <Stack margin={"auto"}>
-      {userFeed?.map((feedPost:any,index:number)=>(
-        <TimelinePost key={index} feedPost={feedPost}/>
+      {doubtsFeed?.map((feedPost:any,index:number)=>(
+        <DoubtsPost key={index} feedPost={feedPost}/>
       ))}
       </Stack>
     </Stack>
   )
 }
 
-export default UserFeed
+export default DoubtsFeed

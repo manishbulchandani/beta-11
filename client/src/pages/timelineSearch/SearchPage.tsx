@@ -8,13 +8,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import TimelineNode from "../../components/TimelineNodeSearchPage";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { searchTimeline } from "../../features/timeline/timelineApi";
 
 // Types
 export interface TimelineNode {
   title: string;
   message: string;
+  topics:string[];
   createdAt: string;
 }
 
@@ -33,13 +34,13 @@ interface TimelineData {
 
 interface TimelineCardProps {
   data: TimelineData;
+  query:string;
 }
 
-const TimelineCard: React.FC<TimelineCardProps> = ({ data }) => {
+const TimelineCard: React.FC<TimelineCardProps> = ({ data,query }) => {
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const visibleNodes = data?.timelineNodes[0]?.slice(0, 3);
-  console.log(data)
-
+ const navigate=useNavigate()
   return (
     <>
       <Card
@@ -80,6 +81,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ data }) => {
                   key={index}
                   title={node.title}
                   message={node.message}
+                  topics={node.topics}
                   createdAt={node.createdAt}
                   isLast={index === visibleNodes.length - 1}
                 />
@@ -89,6 +91,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ data }) => {
 
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
             <Button
+                onClick={()=>navigate(`/timelines?q=${query}&user=${data.userId}`)}
               variant="contained"
               sx={{
                 borderRadius: 2,
@@ -159,7 +162,7 @@ const TimelineFeed: React.FC = () => {
     <Box key={q} sx={{ p: 3 }}>
       {timelineData?.map((data:any) => (
         // <></>
-        <TimelineCard key={data.id} data={data} />
+        <TimelineCard query={q||""} key={data.id} data={data} />
       ))}
     </Box>
   );

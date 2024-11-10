@@ -51,4 +51,6 @@ router.get("/getFeed", timelineNodeControllers.handleGetFeed);
 
 router.post("/searchTimelineNode", timelineNodeControllers.handleSearchTimelineNodesByCategory);
 
+router.post("/searchSingleTimeline", timelineNodeControllers.handleFetchSpecificTimeline);
+
 export default router;

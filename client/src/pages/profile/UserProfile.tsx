@@ -13,15 +13,16 @@ import {
   Divider,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import SchoolIcon from '@mui/icons-material/School';
-import GroupIcon from '@mui/icons-material/Group';
-import WorkIcon from '@mui/icons-material/Work';
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import SchoolIcon from "@mui/icons-material/School";
+import GroupIcon from "@mui/icons-material/Group";
+import WorkIcon from "@mui/icons-material/Work";
 import ContactInfo from "./ContactInfo";
 import { useEffect, useState } from "react";
 import Timeline from "./Timeline";
-import { fetchUserProfile } from "../../features/user/userApis";
+import { fetchUserProfile, followOther } from "../../features/user/userApis";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { Check, ForkRight, RampRight } from "@mui/icons-material";
 
 const UserProfile = () => {
   const location = useLocation();
@@ -30,10 +31,9 @@ const UserProfile = () => {
   const id = queryParams.get("id");
   const [profileDetails, setProfileDetails] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(0);
-
 
   useEffect(() => {
     const fetchProfileDetails = async () => {
@@ -51,19 +51,30 @@ const UserProfile = () => {
     fetchProfileDetails();
   }, [id]);
 
-  const handlePushTimeline=(item:any)=>{
-    setProfileDetails((prev:any)=>({...prev,nodes:[item,...prev?.nodes]}))
-  }
-
+  const handlePushTimeline = (item: any) => {
+    setProfileDetails((prev: any) => ({
+      ...prev,
+      nodes: [item, ...prev?.nodes],
+    }));
+  };
 
   if (loading) {
     return <FullScreenLoader />;
   }
+
+  const handleFollow=()=>{
+    followOther(profileDetails.userId)
+    setProfileDetails((prev: any) => ({
+      ...prev,
+      isFollowing:true,
+    }));
+  }
+
   return (
     <Box
       sx={{
         maxWidth: "1200px",
-        width:"100%",
+        width: "100%",
         margin: "40px auto",
         padding: "20px",
         minHeight: "100vh",
@@ -88,7 +99,7 @@ const UserProfile = () => {
             opacity: 0.8,
           }}
         />
-        
+
         <Box sx={{ p: 3, position: "relative" }}>
           {/* Profile Avatar */}
           <Avatar
@@ -104,10 +115,10 @@ const UserProfile = () => {
             alt={profileDetails?.name}
             src="/path-to-image.jpg"
           />
-          
+
           {/* Profile Info */}
-          <Stack 
-            direction="row" 
+          <Stack
+            direction="row"
             justifyContent="space-between"
             alignItems="flex-start"
             sx={{ ml: "200px" }}
@@ -116,32 +127,33 @@ const UserProfile = () => {
               <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
                 {profileDetails?.name}
               </Typography>
-              <Typography 
-                variant="body1" 
-                color="text.secondary" 
+              <Typography
+                variant="body1"
+                color="text.secondary"
                 sx={{ mb: 2, fontSize: "1.1rem" }}
               >
-               {profileDetails?.bio}
+                {profileDetails?.bio}
               </Typography>
-              
+
               <Stack direction="row" spacing={3} alignItems="center">
                 <Stack direction="row" spacing={1} alignItems="center">
                   <SchoolIcon color="action" />
                   <Typography color="text.secondary">
-                    {profileDetails?.collegeOrInstituteName	}
+                    {profileDetails?.collegeOrInstituteName}
                   </Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <WorkIcon color="action" />
                   <Typography color="text.secondary" width={"max-content"}>
-                    {profileDetails?.professionalExperiences && profileDetails?.professionalExperiences[0]?.position}
+                    {profileDetails?.professionalExperiences &&
+                      profileDetails?.professionalExperiences[0]?.position}
                   </Typography>
                 </Stack>
               </Stack>
             </Box>
-            
+
             <Stack direction="row" spacing={2}>
-              <Button 
+              {/* <Button 
                 variant="outlined" 
                 startIcon={<EmailIcon />}
                 sx={{
@@ -151,18 +163,26 @@ const UserProfile = () => {
                 }}
               >
                 Message
-              </Button>
-              <Button 
-                variant="contained" 
-                startIcon={<PersonAddIcon />}
-                sx={{
-                  borderRadius: "8px",
-                  textTransform: "none",
-                  px: 3,
-                }}
-              >
-                Connect
-              </Button>
+              </Button> */}
+
+              {id ? (
+                profileDetails?.isFollowing ? (
+                  <Chip icon={<Check/>} label={"Following"}/>
+                ) : (
+                  <Button
+                    variant="contained"
+                    startIcon={<PersonAddIcon />}
+                    onClick={()=>handleFollow()}
+                    sx={{
+                      borderRadius: "8px",
+                      textTransform: "none",
+                      px: 3,
+                    }}
+                  >
+                    Follow
+                  </Button>
+                )
+              ) : null}
             </Stack>
           </Stack>
         </Box>
@@ -183,10 +203,15 @@ const UserProfile = () => {
           >
             <Stack direction="row" alignItems="center" spacing={1} mb={2}>
               <GroupIcon color="primary" />
-              <Typography variant="h6">Connections</Typography>
+              <Typography variant="h6">Followers</Typography>
             </Stack>
-            <Typography variant="h3" fontWeight="600" color="primary.main" onClick={()=>navigate("/profile?id=672efc4c74620c4588c396e5")}>
-              1,234
+            <Typography
+              variant="h3"
+              fontWeight="600"
+              color="primary.main"
+              onClick={() => navigate("/profile?id=672efc4c74620c4588c396e5")}
+            >
+              {profileDetails?.followers?.length}
             </Typography>
             <Typography color="text.secondary">
               Growing your network by 15% this month
@@ -207,8 +232,7 @@ const UserProfile = () => {
               Top Skills
             </Typography>
             <Stack direction={"row"} gap="12px" flexWrap={"wrap"}>
-
-              {profileDetails?.skills?.map((skill:string,index:number) => (
+              {profileDetails?.skills?.map((skill: string, index: number) => (
                 <Box key={index}>
                   {/* <Stack
                     direction="row"
@@ -216,17 +240,17 @@ const UserProfile = () => {
                     alignItems="center"
                     mb={1}
                   > */}
-                    <Chip
-                      label={skill}
-                      size="small"
-                      sx={{
-                        alignSelf: "flex-start",
-                        bgcolor: "#e3f2fd",
-                        color: "#1976d2",
-                        fontSize: "0.75rem",
-                        height: "24px",
-                      }}
-                    />
+                  <Chip
+                    label={skill}
+                    size="small"
+                    sx={{
+                      alignSelf: "flex-start",
+                      bgcolor: "#e3f2fd",
+                      color: "#1976d2",
+                      fontSize: "0.75rem",
+                      height: "24px",
+                    }}
+                  />
                   {/* </Stack> */}
                   {/* <Box
                     sx={{
@@ -250,80 +274,83 @@ const UserProfile = () => {
             </Stack>
           </Paper>
           <Paper
-      elevation={0}
-      sx={{
-        p: 3,
-        borderRadius: '16px',
-        border: '1px solid',
-        borderColor: 'divider',
-        mb: 3
-      }}
-    >
-      <Stack direction="row" alignItems="center" spacing={1} mb={3}>
-        <WorkIcon color="primary" />
-        <Typography variant="h6">Professional Experience</Typography>
-      </Stack>
-
-      <Stack spacing={3}>
-        {profileDetails?.professionalExperiences?.map((exp:any, index:number) => (
-          <Box key={index}>
-            <Stack direction="row" spacing={2} alignItems="flex-start">
-              <Avatar
-                sx={{
-                  bgcolor: 'primary.light',
-                  width: 45,
-                  height: 45,
-                  fontSize: '1.2rem',
-                  fontWeight: 600
-                }}
-              >
-                {exp.company[0]}
-              </Avatar>
-              
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    color: 'text.primary',
-                    mb: 0.5
-                  }}
-                >
-                  {exp.role}
-                </Typography>
-                
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontSize: '0.95rem',
-                    color: 'primary.main',
-                    fontWeight: 500,
-                    mb: 1
-                  }}
-                >
-                  {exp.company}
-                </Typography>
-                
-                <Typography
-                  fontSize={"0.8rem"}
-                  sx={{
-                    color: 'text.secondary',
-                    lineHeight: 1.6
-                  }}
-                >
-                  {exp.description}
-                </Typography>
-              </Box>
+            elevation={0}
+            sx={{
+              p: 3,
+              borderRadius: "16px",
+              border: "1px solid",
+              borderColor: "divider",
+              mb: 3,
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1} mb={3}>
+              <WorkIcon color="primary" />
+              <Typography variant="h6">Professional Experience</Typography>
             </Stack>
-            
-            {index < profileDetails?.professionalExperiences?.length - 1 && (
-              <Divider sx={{ mt: 3 }} />
-            )}
-          </Box>
-        ))}
-      </Stack>
-    </Paper>
+
+            <Stack spacing={3}>
+              {profileDetails?.professionalExperiences?.map(
+                (exp: any, index: number) => (
+                  <Box key={index}>
+                    <Stack direction="row" spacing={2} alignItems="flex-start">
+                      <Avatar
+                        sx={{
+                          bgcolor: "primary.light",
+                          width: 45,
+                          height: 45,
+                          fontSize: "1.2rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {exp.company[0]}
+                      </Avatar>
+
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontSize: "1.1rem",
+                            fontWeight: 600,
+                            color: "text.primary",
+                            mb: 0.5,
+                          }}
+                        >
+                          {exp.role}
+                        </Typography>
+
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontSize: "0.95rem",
+                            color: "primary.main",
+                            fontWeight: 500,
+                            mb: 1,
+                          }}
+                        >
+                          {exp.company}
+                        </Typography>
+
+                        <Typography
+                          fontSize={"0.8rem"}
+                          sx={{
+                            color: "text.secondary",
+                            lineHeight: 1.6,
+                          }}
+                        >
+                          {exp.description}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    {index <
+                      profileDetails?.professionalExperiences?.length - 1 && (
+                      <Divider sx={{ mt: 3 }} />
+                    )}
+                  </Box>
+                )
+              )}
+            </Stack>
+          </Paper>
         </Stack>
 
         {/* Right Column */}
@@ -336,8 +363,8 @@ const UserProfile = () => {
               borderColor: "divider",
             }}
           >
-            <Tabs 
-              value={activeTab} 
+            <Tabs
+              value={activeTab}
               onChange={(_, value) => setActiveTab(value)}
               sx={{
                 px: 2,
@@ -347,7 +374,7 @@ const UserProfile = () => {
                   fontSize: "1rem",
                   fontWeight: 500,
                   minWidth: "120px",
-                }
+                },
               }}
             >
               <Tab value={0} label="Timeline" />
@@ -355,7 +382,12 @@ const UserProfile = () => {
             </Tabs>
             <Divider sx={{ mt: 2 }} />
             <Box sx={{ p: 3 }}>
-              {activeTab === 0 && <Timeline timelineNodes={profileDetails?.nodes} handlePushTimeline={handlePushTimeline} />}
+              {activeTab === 0 && (
+                <Timeline
+                  timelineNodes={profileDetails?.nodes}
+                  handlePushTimeline={handlePushTimeline}
+                />
+              )}
               {activeTab === 1 && <ContactInfo />}
             </Box>
           </Paper>

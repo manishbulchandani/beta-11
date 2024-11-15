@@ -1,6 +1,6 @@
 # Beta-11
 
-### Version: Beta (Hackathon 1st Prize Winning Project 🎉)
+### Version Beta - NIT Bhopal Hackathon 1st Prize Winning Project 🎉
 
 ---
 
